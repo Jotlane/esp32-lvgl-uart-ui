@@ -1,0 +1,8 @@
+/build
+/.vscode
+/components/Arduino_GFX-master
+/components/arduino-esp32-master
+/components/DHT20
+/components/gt911-arduino-main
+/components/LovyanGFX-master
+/components/lvgl-3

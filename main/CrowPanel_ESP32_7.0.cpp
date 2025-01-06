@@ -5,6 +5,10 @@
 //UI
 #include "ui.h"
 
+//FreeRTOS
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
 #include <LovyanGFX.hpp>
 #include <lgfx/v1/platforms/esp32s3/Panel_RGB.hpp>
 #include <lgfx/v1/platforms/esp32s3/Bus_RGB.hpp>
@@ -172,7 +176,83 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 
 uint16_t calData[5] = {190, 3679, 382, 3335, 0};
 
+//FreeRTOS stuff
+void lvgl_task(void *pvParameter);
+void other_task(void *pvParameter);
 
+void lvgl_task(void *pvParameter) {
+    const TickType_t xDelay = pdMS_TO_TICKS(20); // 20 ms delay for ~50 FPS
+
+    while (1) {
+        lv_task_handler(); // Handle LVGL tasks (UI updates, animations)
+        lv_timer_handler();
+        vTaskDelay(xDelay); // Wait for the next iteration
+    }
+}
+
+void other_task(void *pvParameter) {
+    const TickType_t xDelay = pdMS_TO_TICKS(100); //every .1s
+    int yes = 0;
+    while (1) {
+        Serial.print(led);
+        char DHT_buffer[6];
+        //int a = (int)dht20.getTemperature();
+        //int b = (int)dht20.getHumidity();
+        int a = 10;
+        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
+        lv_label_set_text(ui_Label1, DHT_buffer);
+        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", b);
+        lv_label_set_text(ui_Label2, DHT_buffer);
+        if(led == 1)
+            digitalWrite(38, HIGH);
+        if(led == 0)
+            digitalWrite(38, LOW);
+        yes = !yes;
+        Serial.println("yes: ");
+        Serial.print(yes);
+        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
+        lv_label_set_text(ui_Label2, DHT_buffer);
+        if(activate_test)
+        {
+          activate_test = 0;
+          lv_obj_t * label = lv_label_create(ui_Panel1);
+          lv_label_set_text(label, "Inside Container!");
+        }
+        vTaskDelay(xDelay); // Wait for the next iteration
+    }
+}
+
+void uart_task(void *pvParameter) {
+    const TickType_t xDelay = pdMS_TO_TICKS(100); //every .1s
+    int yes = 0;
+    while (1) {
+        Serial.print(led);
+        char DHT_buffer[6];
+        //int a = (int)dht20.getTemperature();
+        //int b = (int)dht20.getHumidity();
+        int a = 10;
+        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
+        lv_label_set_text(ui_Label1, DHT_buffer);
+        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", b);
+        lv_label_set_text(ui_Label2, DHT_buffer);
+        if(led == 1)
+            digitalWrite(38, HIGH);
+        if(led == 0)
+            digitalWrite(38, LOW);
+        yes = !yes;
+        Serial.println("yes: ");
+        Serial.print(yes);
+        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
+        lv_label_set_text(ui_Label2, DHT_buffer);
+        if(activate_test)
+        {
+          activate_test = 0;
+          lv_obj_t * label = lv_label_create(ui_Panel1);
+          lv_label_set_text(label, "Inside Container!");
+        }
+        vTaskDelay(xDelay); // Wait for the next iteration
+    }
+}
 
 extern "C" void app_main()
 {
@@ -217,34 +297,7 @@ extern "C" void app_main()
     lcd.fillScreen(BLACK);
     ui_init(); //主UI界面
     Serial.println("Setup done");
-    int yes = 0;
-    while (1)
-    {
-        Serial.print(led);
-        char DHT_buffer[6];
-        //int a = (int)dht20.getTemperature();
-        //int b = (int)dht20.getHumidity();
-        int a = 10;
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
-        lv_label_set_text(ui_Label1, DHT_buffer);
-        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", b);
-        lv_label_set_text(ui_Label2, DHT_buffer);
-        if(led == 1)
-            digitalWrite(38, HIGH);
-        if(led == 0)
-            digitalWrite(38, LOW);
-        yes = !yes;
-        Serial.println("yes: ");
-        Serial.print(yes);
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
-        lv_label_set_text(ui_Label2, DHT_buffer);
-        lv_timer_handler();
-        if(activate_test)
-        {
-          activate_test = 0;
-          lv_obj_t * label = lv_label_create(ui_Panel1);
-          lv_label_set_text(label, "Inside Container!");
-        }
-        delay(5);
-    }
+
+    xTaskCreate(lvgl_task, "LVGL Task", 4096, NULL, 2, NULL);
+    xTaskCreate(other_task, "Other Task", 4096, NULL, 1, NULL);
 }

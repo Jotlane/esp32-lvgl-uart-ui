@@ -53,7 +53,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_style_bg_img_src(ui_Button1, &ui_img_on_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_Roller1 = lv_roller_create(ui_Screen1);
-    lv_roller_set_options(ui_Roller1, "Language here\nOption 1\nOption 2\nOption 3\nssfsfed", LV_ROLLER_MODE_NORMAL);
+    lv_roller_set_options(ui_Roller1, "Language here\nOption 1\n是一种嵌入机械或电气\nOption 3\nמעבד, או בשמו המלא יחידת עיבוד מרכזית", LV_ROLLER_MODE_NORMAL);
     lv_obj_set_height(ui_Roller1, 160);
     lv_obj_set_width(ui_Roller1, LV_SIZE_CONTENT);   /// 1
     lv_obj_set_x(ui_Roller1, -306);

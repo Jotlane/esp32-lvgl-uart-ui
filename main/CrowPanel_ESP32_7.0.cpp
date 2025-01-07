@@ -218,7 +218,6 @@ void other_task(void *pvParameter) {
           lv_obj_t * label = lv_label_create(ui_Panel1);
           lv_label_set_text(label, "Inside Container!");
           lv_obj_scroll_to_view(label, LV_ANIM_ON);
-          //https://docs.lvgl.io/8.3/overview/scroll.html?highlight=scroll#scroll-manually ADD THIS NEXT
         }
         vTaskDelay(xDelay); // Wait for the next iteration
     }

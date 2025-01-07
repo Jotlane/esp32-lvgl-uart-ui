@@ -217,6 +217,8 @@ void other_task(void *pvParameter) {
           activate_test = 0;
           lv_obj_t * label = lv_label_create(ui_Panel1);
           lv_label_set_text(label, "Inside Container!");
+          lv_obj_scroll_to_view(label, LV_ANIM_ON);
+          //https://docs.lvgl.io/8.3/overview/scroll.html?highlight=scroll#scroll-manually ADD THIS NEXT
         }
         vTaskDelay(xDelay); // Wait for the next iteration
     }
@@ -226,30 +228,7 @@ void uart_task(void *pvParameter) {
     const TickType_t xDelay = pdMS_TO_TICKS(100); //every .1s
     int yes = 0;
     while (1) {
-        Serial.print(led);
-        char DHT_buffer[6];
-        //int a = (int)dht20.getTemperature();
-        //int b = (int)dht20.getHumidity();
-        int a = 10;
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
-        lv_label_set_text(ui_Label1, DHT_buffer);
-        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", b);
-        lv_label_set_text(ui_Label2, DHT_buffer);
-        if(led == 1)
-            digitalWrite(38, HIGH);
-        if(led == 0)
-            digitalWrite(38, LOW);
-        yes = !yes;
-        Serial.println("yes: ");
-        Serial.print(yes);
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
-        lv_label_set_text(ui_Label2, DHT_buffer);
-        if(activate_test)
-        {
-          activate_test = 0;
-          lv_obj_t * label = lv_label_create(ui_Panel1);
-          lv_label_set_text(label, "Inside Container!");
-        }
+        //uart stuff
         vTaskDelay(xDelay); // Wait for the next iteration
     }
 }

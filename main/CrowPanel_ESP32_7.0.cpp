@@ -5,6 +5,13 @@
 //UI
 #include "ui.h"
 
+//UART
+#include "esp_system.h"
+#include "esp_log.h"
+#include "driver/uart.h"
+#include "string.h"
+#include "driver/gpio.h"
+
 //FreeRTOS
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -34,6 +41,28 @@ Ticker ticker1;
 #define GFX_BL DF_GFX_BL // default backlight pin, you may replace DF_GFX_BL to actual backlight pin
 
 /* More dev device declaration: https://github.com/moononournation/Arduino_GFX/wiki/Dev-Device-Declaration */
+
+static const int RX_BUF_SIZE = 1024;
+
+//UART
+//https://controllerstech.com/how-to-use-uart-in-esp32-esp-idf/
+#define TXD_PIN (GPIO_NUM_43)//UART pins according to the screen
+#define RXD_PIN (GPIO_NUM_44)
+
+void uart_init(void) {
+    const uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_APB,
+    };
+    // We won't use a buffer for sending data.
+    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
+    uart_param_config(UART_NUM_1, &uart_config);
+    uart_set_pin(UART_NUM_1, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+}
 
 class LGFX : public lgfx::LGFX_Device
 {
@@ -176,6 +205,85 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 
 uint16_t calData[5] = {190, 3679, 382, 3335, 0};
 
+//UART tasks and functions
+int sendData(const char* logName, const char* data)
+{
+    const int len = strlen(data);
+    const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
+    ESP_LOGI(logName, "Wrote %d bytes", txBytes);
+    return txBytes;
+}
+
+static void tx_task(void *arg)
+{
+    static const char *TX_TASK_TAG = "TX_TASK";
+    esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
+    while (1) {
+        sendData(TX_TASK_TAG, "Hello world");
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+}
+
+static void rx_task(void *arg)
+{
+    static const char *RX_TASK_TAG = "RX_TASK";
+    esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
+    uint8_t* data = (uint8_t*) malloc(RX_BUF_SIZE+1);
+    lv_obj_t * prev_label_l = lv_label_create(ui_Panel1);
+    lv_obj_t * prev_label_c = lv_label_create(ui_Panel2);
+    while (1) {
+        const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
+        if (rxBytes > 0) {
+            data[rxBytes] = '\0';//needed to get this thing to be interpretable as a string idk weird c stuff
+            //if data[0] is ^, check data[1]
+            //if it's 'l', it's a translation, print to this panel instead of that panel
+            // vice versa if it's c
+            //for both of these, edit the previously added label
+            //if it's n, it's a new label. Then follow same logic as above.
+            if ((char)data[0] == '^')
+            {
+                if ((char)data[1] == 'l')
+                {
+                    if ((char)data[2] == '^')
+                    {
+                        if ((char)data[3] == 'n')
+                        {
+                            lv_obj_t * label = lv_label_create(ui_Panel1);
+                            lv_label_set_text(label, (char*)(data + 4));
+                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
+                            prev_label_l = label;
+                        }
+                    }
+                    else
+                    {
+                        lv_label_set_text(prev_label_l, (char*)(data + 2));
+                        lv_obj_scroll_to_view(prev_label_l, LV_ANIM_ON);
+                    }
+                }
+                else if ((char)data[1] == 'c')
+                {
+                    if ((char)data[2] == '^')
+                    {
+                        if ((char)data[3] == 'n')
+                        {
+                            lv_obj_t * label = lv_label_create(ui_Panel2);
+                            lv_label_set_text(label, (char*)(data + 4));
+                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
+                            prev_label_c = label;
+                        }
+                    }
+                    else
+                    {
+                        lv_label_set_text(prev_label_c, (char*)(data + 2));
+                        lv_obj_scroll_to_view(prev_label_c, LV_ANIM_ON);
+                    }
+                }
+            }
+        }
+    }
+    free(data);
+}
+
 //FreeRTOS stuff
 void lvgl_task(void *pvParameter);
 void other_task(void *pvParameter);
@@ -249,6 +357,8 @@ extern "C" void app_main()
     pinMode(38, OUTPUT);
     digitalWrite(38, HIGH);
 
+    uart_init();//uart init
+
     lv_init();
     touch_init();
     screenWidth = lcd.width();
@@ -278,4 +388,6 @@ extern "C" void app_main()
 
     xTaskCreate(lvgl_task, "LVGL Task", 4096, NULL, 2, NULL);
     xTaskCreate(other_task, "Other Task", 4096, NULL, 1, NULL);
+    xTaskCreate(rx_task, "uart_rx_task", 1024*2, NULL, configMAX_PRIORITIES, NULL);
+    xTaskCreate(tx_task, "uart_tx_task", 1024*2, NULL, configMAX_PRIORITIES-1, NULL);
 }

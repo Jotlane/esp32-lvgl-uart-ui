@@ -240,6 +240,10 @@ static void rx_task(void *arg)
             // vice versa if it's c
             //for both of these, edit the previously added label
             //if it's n, it's a new label. Then follow same logic as above.
+                            lv_obj_t * label = lv_label_create(ui_Panel2);
+                            lv_label_set_text(label, (char*)(data));
+                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
+                            prev_label_l = label;
             if ((char)data[0] == '^')
             {
                 if ((char)data[1] == 'l')

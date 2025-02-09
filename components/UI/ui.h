@@ -15,42 +15,36 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
-void eas_Animation(lv_obj_t * TargetObject, int delay);
 // SCREEN: ui_Screen1
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_Label1;
-extern lv_obj_t * ui_Label2;
-extern lv_obj_t * ui_Label3;
-void ui_event_Button1(lv_event_t * e);
-extern lv_obj_t * ui_Button1;
-extern lv_obj_t * ui_Roller1;
-extern lv_obj_t * ui_Dropdown1;
-extern lv_obj_t * ui_Switch1;
-extern lv_obj_t * ui_Button2;
-extern lv_obj_t * ui_Panel2;
-extern lv_obj_t * ui_Label4;
-extern lv_obj_t * ui_Label5;
-extern lv_obj_t * ui_Label6;
-extern lv_obj_t * ui_Label7;
-extern lv_obj_t * ui_Label8;
-extern lv_obj_t * ui_Label9;
-extern lv_obj_t * ui_Panel1;
-extern lv_obj_t * ui_Label10;
-extern lv_obj_t * ui_Label11;
-extern lv_obj_t * ui_Label12;
-extern lv_obj_t * ui_Label13;
-extern lv_obj_t * ui_Label14;
-extern lv_obj_t * ui_Label15;
+extern lv_obj_t * ui_LeftPanel;
+extern lv_obj_t * ui_LeftTranscribe;
+extern lv_obj_t * ui_LeftTranscribeBubble;
+extern lv_obj_t * ui_LeftTranscribeText;
+extern lv_obj_t * ui_LeftTranslate;
+extern lv_obj_t * ui_LeftTranslateBubble1;
+extern lv_obj_t * ui_LeftTranslateText1;
+extern lv_obj_t * ui_LeftTranscribe1;
+extern lv_obj_t * ui_LeftTranscribeBubble1;
+extern lv_obj_t * ui_LeftTranscribeText1;
+extern lv_obj_t * ui_RightPanel;
+extern lv_obj_t * ui_RightTranscribe;
+extern lv_obj_t * ui_RightTranscribeBubble;
+extern lv_obj_t * ui_RightTranscribeText;
+extern lv_obj_t * ui_RightTranslate;
+extern lv_obj_t * ui_RightTranslateBubble;
+extern lv_obj_t * ui_RightTranslateText;
+extern lv_obj_t * ui_RightTranscribe1;
+extern lv_obj_t * ui_RightTranscribeBubble1;
+extern lv_obj_t * ui_RightTranscribeText1;
 extern lv_obj_t * ui____initial_actions0;
-extern int activate_test;
-
-LV_IMG_DECLARE(ui_img_background_png);    // assets/background.png
-LV_IMG_DECLARE(ui_img_on_png);    // assets/on.png
-LV_IMG_DECLARE(ui_img_off_png);    // assets/off.png
 
 
 
+
+
+LV_FONT_DECLARE(ui_font_Chinese);
 
 
 

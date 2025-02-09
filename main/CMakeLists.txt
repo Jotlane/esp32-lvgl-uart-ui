@@ -10,6 +10,6 @@ idf_component_register(SRCS "CrowPanel_ESP32_7.0.cpp"
                     "../components/UI"
                     "../components/gt911-arduino-main" 
                     "../components/Arduino_GFX-master"
-                    "../components/LovyanGFX-master"   
-                    "../components/DHT20"               
+                    "../components/LovyanGFX-master"
+                    "../components/DHT20" 
                     )

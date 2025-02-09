@@ -46,12 +46,15 @@ static const int RX_BUF_SIZE = 1024;
 
 //UART
 //https://controllerstech.com/how-to-use-uart-in-esp32-esp-idf/
+//#define TXD_PIN (GPIO_NUM_19)
+//#define RXD_PIN (GPIO_NUM_20)
+
 #define TXD_PIN (GPIO_NUM_43)//UART pins according to the screen
 #define RXD_PIN (GPIO_NUM_44)
 
 void uart_init(void) {
     const uart_config_t uart_config = {
-        .baud_rate = 115200,
+        .baud_rate = 9600,
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
@@ -59,9 +62,9 @@ void uart_init(void) {
         .source_clk = UART_SCLK_APB,
     };
     // We won't use a buffer for sending data.
-    uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
-    uart_param_config(UART_NUM_1, &uart_config);
-    uart_set_pin(UART_NUM_1, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_driver_install(UART_NUM_0, RX_BUF_SIZE * 2, 0, 0, NULL, 0);
+    uart_param_config(UART_NUM_0, &uart_config);
+    uart_set_pin(UART_NUM_0, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 }
 
 class LGFX : public lgfx::LGFX_Device
@@ -204,12 +207,12 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 }
 
 uint16_t calData[5] = {190, 3679, 382, 3335, 0};
-
+char* removethis_test_data = "temp";
 //UART tasks and functions
 int sendData(const char* logName, const char* data)
 {
     const int len = strlen(data);
-    const int txBytes = uart_write_bytes(UART_NUM_1, data, len);
+    const int txBytes = uart_write_bytes(UART_NUM_0, data, len);
     ESP_LOGI(logName, "Wrote %d bytes", txBytes);
     return txBytes;
 }
@@ -220,6 +223,7 @@ static void tx_task(void *arg)
     esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
     while (1) {
         sendData(TX_TASK_TAG, "Hello world");
+        sendData(TX_TASK_TAG, removethis_test_data);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
@@ -232,7 +236,7 @@ static void rx_task(void *arg)
     lv_obj_t * prev_label_l = lv_label_create(ui_Panel1);
     lv_obj_t * prev_label_c = lv_label_create(ui_Panel2);
     while (1) {
-        const int rxBytes = uart_read_bytes(UART_NUM_1, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
+        const int rxBytes = uart_read_bytes(UART_NUM_0, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
         if (rxBytes > 0) {
             data[rxBytes] = '\0';//needed to get this thing to be interpretable as a string idk weird c stuff
             //if data[0] is ^, check data[1]
@@ -240,6 +244,15 @@ static void rx_task(void *arg)
             // vice versa if it's c
             //for both of these, edit the previously added label
             //if it's n, it's a new label. Then follow same logic as above.
+                            //Delete this weird indented part when testing is done
+                            lv_obj_t * label = lv_label_create(ui_Panel1);
+                            lv_label_set_text(label, (char*)(data));
+                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
+                            prev_label_l = label;
+
+                            removethis_test_data = (char*)(data);
+
+
             if ((char)data[0] == '^')
             {
                 if ((char)data[1] == 'l')
@@ -302,23 +315,23 @@ void other_task(void *pvParameter) {
     const TickType_t xDelay = pdMS_TO_TICKS(100); //every .1s
     int yes = 0;
     while (1) {
-        Serial.print(led);
+        //Serial.print(led);
         char DHT_buffer[6];
         //int a = (int)dht20.getTemperature();
         //int b = (int)dht20.getHumidity();
         int a = 10;
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
+        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", a);
         lv_label_set_text(ui_Label1, DHT_buffer);
         //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", b);
         lv_label_set_text(ui_Label2, DHT_buffer);
-        if(led == 1)
-            digitalWrite(38, HIGH);
-        if(led == 0)
-            digitalWrite(38, LOW);
-        yes = !yes;
-        Serial.println("yes: ");
-        Serial.print(yes);
-        snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
+        //if(led == 1)
+            //digitalWrite(38, HIGH);
+        //if(led == 0)
+            //digitalWrite(38, LOW);
+        //yes = !yes;
+        //Serial.println("yes: ");
+        //Serial.print(yes);
+        //snprintf(DHT_buffer, sizeof(DHT_buffer), "%d", yes);
         lv_label_set_text(ui_Label2, DHT_buffer);
         if(activate_test)
         {
@@ -327,6 +340,9 @@ void other_task(void *pvParameter) {
           lv_label_set_text(label, "Inside Container!");
           lv_obj_scroll_to_view(label, LV_ANIM_ON);
         }
+
+
+
         vTaskDelay(xDelay); // Wait for the next iteration
     }
 }
@@ -344,8 +360,8 @@ extern "C" void app_main()
 {
     // put your setup code here, to run once:
     Serial.begin(9600); // Init Display
-    Wire.begin(22, 21);
-    dht20.begin();
+    //Wire.begin(22, 21);
+    //dht20.begin();
     lcd.begin();
     lcd.fillScreen(BLACK);
     lcd.setTextSize(2);

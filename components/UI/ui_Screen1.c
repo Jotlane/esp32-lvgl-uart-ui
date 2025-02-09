@@ -15,12 +15,11 @@ void ui_Screen1_screen_init(void)
     ui_LeftPanel = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_LeftPanel, 425);
     lv_obj_set_height(ui_LeftPanel, 376);
-    lv_obj_set_x(ui_LeftPanel, 201);
-    lv_obj_set_y(ui_LeftPanel, -30);
+    lv_obj_set_x(ui_LeftPanel, -228);
+    lv_obj_set_y(ui_LeftPanel, -7);
     lv_obj_set_align(ui_LeftPanel, LV_ALIGN_CENTER);
-    lv_obj_set_flex_flow(ui_LeftPanel, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_flow(ui_LeftPanel, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(ui_LeftPanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-    lv_obj_set_style_transform_angle(ui_LeftPanel, 900, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_LeftTranscribe = lv_obj_create(ui_LeftPanel);
     lv_obj_set_width(ui_LeftTranscribe, lv_pct(100));
@@ -133,12 +132,11 @@ void ui_Screen1_screen_init(void)
     ui_RightPanel = lv_obj_create(ui_Screen1);
     lv_obj_set_width(ui_RightPanel, 425);
     lv_obj_set_height(ui_RightPanel, 376);
-    lv_obj_set_x(ui_RightPanel, 220);
-    lv_obj_set_y(ui_RightPanel, 395);
+    lv_obj_set_x(ui_RightPanel, 221);
+    lv_obj_set_y(ui_RightPanel, -3);
     lv_obj_set_align(ui_RightPanel, LV_ALIGN_CENTER);
     lv_obj_set_flex_flow(ui_RightPanel, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(ui_RightPanel, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_START);
-    lv_obj_set_style_transform_angle(ui_RightPanel, 2700, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui_RightTranscribe = lv_obj_create(ui_RightPanel);
     lv_obj_set_width(ui_RightTranscribe, lv_pct(100));

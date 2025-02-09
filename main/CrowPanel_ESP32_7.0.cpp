@@ -196,7 +196,7 @@ static void tx_task(void *arg)
     esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
     while (1)
     {
-        sendData(TX_TASK_TAG, "Hello world");
+        // sendData(TX_TASK_TAG, "Hello world");
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
@@ -206,12 +206,50 @@ static void rx_task(void *arg)
     static const char *RX_TASK_TAG = "RX_TASK";
     esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
     uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
+    lv_obj_t *prev_label_c = lv_label_create(ui_LeftPanel);
     while (1)
     {
         const int rxBytes = uart_read_bytes(UART_NUM_0, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
         if (rxBytes > 0)
         {
             data[rxBytes] = '\0';
+            lv_obj_t *ui_NewLeftTranscribe = lv_obj_create(ui_LeftPanel);
+            lv_obj_set_width(ui_NewLeftTranscribe, lv_pct(100));
+            lv_obj_set_height(ui_NewLeftTranscribe, LV_SIZE_CONTENT); /// 1
+            lv_obj_set_align(ui_NewLeftTranscribe, LV_ALIGN_CENTER);
+            lv_obj_clear_flag(ui_NewLeftTranscribe, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+            lv_obj_set_style_pad_left(ui_NewLeftTranscribe, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(ui_NewLeftTranscribe, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(ui_NewLeftTranscribe, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(ui_NewLeftTranscribe, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+            lv_obj_t *ui_NewLeftTranscribeBubble = lv_obj_create(ui_NewLeftTranscribe);
+            lv_obj_set_width(ui_NewLeftTranscribeBubble, lv_pct(80));
+            lv_obj_set_height(ui_NewLeftTranscribeBubble, LV_SIZE_CONTENT); /// 1
+            lv_obj_set_align(ui_NewLeftTranscribeBubble, LV_ALIGN_RIGHT_MID);
+            lv_obj_clear_flag(ui_NewLeftTranscribeBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+            lv_obj_set_style_bg_color(ui_NewLeftTranscribeBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_opa(ui_NewLeftTranscribeBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+            lv_obj_set_style_pad_left(ui_NewLeftTranscribeBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(ui_NewLeftTranscribeBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(ui_NewLeftTranscribeBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(ui_NewLeftTranscribeBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+            lv_obj_t *ui_NewLeftTranscribeText = lv_label_create(ui_NewLeftTranscribeBubble);
+            lv_obj_set_width(ui_NewLeftTranscribeText, lv_pct(100));
+            lv_obj_set_height(ui_NewLeftTranscribeText, LV_SIZE_CONTENT); /// 100
+            lv_obj_set_align(ui_NewLeftTranscribeText, LV_ALIGN_RIGHT_MID);
+            lv_label_set_text(ui_NewLeftTranscribeText, (char *)(data));
+            lv_obj_set_style_text_align(ui_NewLeftTranscribeText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_left(ui_NewLeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_right(ui_NewLeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_top(ui_NewLeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_pad_bottom(ui_NewLeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+            lv_obj_scroll_to_view(ui_NewLeftTranscribe, LV_ANIM_ON);
+            prev_label_c = ui_NewLeftTranscribeText;
         }
     }
     free(data);

@@ -136,21 +136,6 @@ LGFX lcd;
 
 #include "touch.h"
 
-/* Display flushing */
-/***void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
-{
-    uint32_t w = (area->x2 - area->x1 + 1);
-    uint32_t h = (area->y2 - area->y1 + 1);
-
-#if (LV_COLOR_16_SWAP != 0)
-    lcd.draw16bitBeRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#else
-    lcd.draw16bitRGBBitmap(area->x1, area->y1, (uint16_t *)&color_p->full, w, h);
-#endif
-
-    lv_disp_flush_ready(disp);
-}
-***/
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
 
@@ -221,54 +206,12 @@ static void rx_task(void *arg)
     static const char *RX_TASK_TAG = "RX_TASK";
     esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
     uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
-    /*     lv_obj_t *prev_label_l = lv_label_create(ui_Panel1);
-        lv_obj_t *prev_label_c = lv_label_create(ui_Panel2); */
     while (1)
     {
         const int rxBytes = uart_read_bytes(UART_NUM_0, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
         if (rxBytes > 0)
         {
-            data[rxBytes] = '\0'; // needed to get this thing to be interpretable as a string idk weird c stuff
-
-            if ((char)data[0] == '^')
-            {
-                if ((char)data[1] == 'l')
-                {
-                    if ((char)data[2] == '^')
-                    {
-                        if ((char)data[3] == 'n')
-                        {
-                            lv_obj_t *label = lv_label_create(ui_Panel1);
-                            lv_label_set_text(label, (char *)(data + 4));
-                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
-                            prev_label_l = label;
-                        }
-                    }
-                    else
-                    {
-                        lv_label_set_text(prev_label_l, (char *)(data + 2));
-                        lv_obj_scroll_to_view(prev_label_l, LV_ANIM_ON);
-                    }
-                }
-                else if ((char)data[1] == 'c')
-                {
-                    if ((char)data[2] == '^')
-                    {
-                        if ((char)data[3] == 'n')
-                        {
-                            lv_obj_t *label = lv_label_create(ui_Panel2);
-                            lv_label_set_text(label, (char *)(data + 4));
-                            lv_obj_scroll_to_view(label, LV_ANIM_ON);
-                            prev_label_c = label;
-                        }
-                    }
-                    else
-                    {
-                        lv_label_set_text(prev_label_c, (char *)(data + 2));
-                        lv_obj_scroll_to_view(prev_label_c, LV_ANIM_ON);
-                    }
-                }
-            }
+            data[rxBytes] = '\0';
         }
     }
     free(data);

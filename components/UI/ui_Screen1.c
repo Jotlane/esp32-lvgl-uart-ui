@@ -50,8 +50,9 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_height(ui_LeftTranscribeText, LV_SIZE_CONTENT);    /// 100
     lv_obj_set_align(ui_LeftTranscribeText, LV_ALIGN_RIGHT_MID);
     lv_label_set_text(ui_LeftTranscribeText,
-                      "Text dsad asd asd sa asd as dsad  qwwq we rwqr we rwer ewr wq rewq ewq rwq rwq rqwe rwqe r");
+                      "书、杂志等中区别于图片的）正文，文字材料, （移动电话或传呼机发送的）短消息");
     lv_obj_set_style_text_align(ui_LeftTranscribeText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_LeftTranscribeText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_left(ui_LeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_right(ui_LeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(ui_LeftTranscribeText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);

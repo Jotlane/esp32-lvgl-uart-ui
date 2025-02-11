@@ -161,8 +161,11 @@ void my_touchpad_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
             data->state = LV_INDEV_STATE_PR;
 
             /*Set the coordinates*/
-            data->point.x = touch_last_x;
-            data->point.y = touch_last_y;
+            // data->point.x = touch_last_x;
+            // data->point.y = touch_last_y;
+            // Jank? fix but hey it works
+            data->point.x = touch_last_y * 480 / 800;
+            data->point.y = (480 - touch_last_x) * 800 / 480;
             Serial.print("Data x :");
             Serial.println(touch_last_x);
 
@@ -421,6 +424,7 @@ extern "C" void app_main()
     // Wire.begin(22, 21);
     // dht20.begin();
     lcd.begin();
+    lcd.setRotation(1);
     lcd.fillScreen(BLACK);
     lcd.setTextSize(2);
     delay(200);

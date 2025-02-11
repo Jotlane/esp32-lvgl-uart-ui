@@ -19,9 +19,9 @@ extern "C" {
 void ui_Screen1_screen_init(void);
 extern lv_obj_t * ui_Screen1;
 extern lv_obj_t * ui_LeftPanel;
-extern lv_obj_t * ui_LeftTranscribe;
-extern lv_obj_t * ui_LeftTranscribeBubble;
-extern lv_obj_t * ui_LeftTranscribeText;
+extern lv_obj_t * ui_LeftTranscribe2;
+extern lv_obj_t * ui_LeftTranscribeBubble2;
+extern lv_obj_t * ui_LeftTranscribeText2;
 extern lv_obj_t * ui_LeftTranslate;
 extern lv_obj_t * ui_LeftTranslateBubble1;
 extern lv_obj_t * ui_LeftTranslateText1;

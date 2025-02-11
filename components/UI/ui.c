@@ -13,9 +13,9 @@
 void ui_Screen1_screen_init(void);
 lv_obj_t * ui_Screen1;
 lv_obj_t * ui_LeftPanel;
-lv_obj_t * ui_LeftTranscribe;
-lv_obj_t * ui_LeftTranscribeBubble;
-lv_obj_t * ui_LeftTranscribeText;
+lv_obj_t * ui_LeftTranscribe2;
+lv_obj_t * ui_LeftTranscribeBubble2;
+lv_obj_t * ui_LeftTranscribeText2;
 lv_obj_t * ui_LeftTranslate;
 lv_obj_t * ui_LeftTranslateBubble1;
 lv_obj_t * ui_LeftTranslateText1;

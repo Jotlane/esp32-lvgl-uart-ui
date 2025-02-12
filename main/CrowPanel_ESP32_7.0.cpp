@@ -3,7 +3,7 @@
 #include <lvgl.h>
 // UI
 #include "ui.h"
-
+#include <cstring>
 // UART
 #include "esp_system.h"
 #include "esp_log.h"
@@ -203,16 +203,27 @@ static void tx_task(void *arg)
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
 }
-
+// lv_label_set_recolor(ui_RightTranscribeText, "true");
 static void rx_task(void *arg)
 {
     static const char *RX_TASK_TAG = "RX_TASK";
     esp_log_level_set(RX_TASK_TAG, ESP_LOG_INFO);
     uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
-    lv_obj_t *prev_label = lv_label_create(ui_LeftPanel);
+    lv_obj_t *prev_label_L = lv_label_create(ui_LeftPanel);
+    lv_obj_t *prev_label_R = lv_label_create(ui_RightPanel);
     bool rightScreen = true; // Determines left/right panel and which language. dummy true
     bool rightBubble = true; // Determines bubble align and colour. dummy true
     bool nextIsNew = true;   // Determines if previous text was confirmed or not. True by default for first interaction
+    int prevSpeakerL = 0;    // 0 is left, 1 is right
+    int prevSpeakerR = 0;    // 0 is left, 1 is right
+    char *prevStringL = (char *)malloc(1024);
+    char *prevStringR = (char *)malloc(1024);
+    strcpy(prevStringL, "");
+    strcpy(prevStringR, "");
+    // if prevSpeaker is diff from bit 0, new stuff. have a separate prevSpeaker for left and right side of screen
+    // first will be unconfirmed. have a string stored for the speaker's transcription and translation. update the label with that string + the gray code and unconfirmed
+    // if confirmed, append to the confirmed string and update
+    // so store 4 strings speaker0/1 transcription/translation
     while (1)
     {
         const int rxBytes = uart_read_bytes(UART_NUM_0, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
@@ -240,9 +251,28 @@ static void rx_task(void *arg)
                 rightBubble = true;
             }
 
-            if (nextIsNew)
+            if (rightScreen)
             {
-                if (rightScreen)
+                if ((data[0] & (1 << 0)) == prevSpeakerR) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+                {
+                    if (data[0] & (1 << 2)) // if confirmed,
+                    {
+                        strcat(prevStringR, (char *)(data + 1));
+                        lv_label_set_text(prev_label_R, prevStringR);
+                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                    }
+                    else
+                    {
+                        char *tempStr = (char *)malloc(1024);
+                        strcpy(tempStr, prevStringR);
+                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, (char *)(data + 1));
+                        lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
+                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        free(tempStr);
+                    }
+                }
+                else
                 {
                     lv_obj_t *ui_NewRow = lv_obj_create(ui_RightPanel);
                     lv_obj_set_width(ui_NewRow, lv_pct(100));
@@ -254,6 +284,8 @@ static void rx_task(void *arg)
                     lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    strcpy(prevStringR, "");
+
                     if (rightBubble)
                     {
                         lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
@@ -274,15 +306,31 @@ static void rx_task(void *arg)
                         lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
                         lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
                         lv_label_set_text(ui_NewText, (char *)(data + 1));
+                        lv_label_set_recolor(ui_NewText, "true");
                         lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+                        prev_label_R = ui_NewText;
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        prev_label = ui_NewText;
+                        if (data[0] & (1 << 2)) // if confirmed,
+                        {
+                            strcat(prevStringR, (char *)(data + 1));
+                            lv_label_set_text(prev_label_R, prevStringR);
+                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        }
+                        else
+                        {
+                            char *tempStr = (char *)malloc(1024);
+                            strcpy(tempStr, prevStringR);
+                            strcat(tempStr, " #818181 ");
+                            strcat(tempStr, (char *)(data + 1));
+                            lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
+                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                            free(tempStr);
+                        }
                     }
                     else
                     {
@@ -303,6 +351,7 @@ static void rx_task(void *arg)
                         lv_obj_set_width(ui_NewText, lv_pct(100));
                         lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
                         lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                        lv_label_set_recolor(ui_NewText, "true");
                         lv_label_set_text(ui_NewText, (char *)(data + 1));
                         lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -310,9 +359,47 @@ static void rx_task(void *arg)
                         lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+                        prev_label_R = ui_NewText;
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        prev_label = ui_NewText;
+                        if (data[0] & (1 << 2)) // if confirmed,
+                        {
+                            strcat(prevStringR, (char *)(data + 1));
+                            lv_label_set_text(prev_label_R, prevStringR);
+                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        }
+                        else
+                        {
+                            char *tempStr = (char *)malloc(1024);
+                            strcpy(tempStr, prevStringR);
+                            strcat(tempStr, " #818181 ");
+                            strcat(tempStr, (char *)(data + 1));
+                            lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
+                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                            free(tempStr);
+                        }
+                    }
+                }
+                prevSpeakerR = data[0] & (1 << 0);
+            }
+            else
+            {
+                if ((data[0] & (1 << 0)) == prevSpeakerL) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+                {
+                    if (data[0] & (1 << 2)) // if confirmed,
+                    {
+                        strcat(prevStringL, (char *)(data + 1));
+                        lv_label_set_text(prev_label_L, prevStringL);
+                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                    }
+                    else
+                    {
+                        char *tempStr = (char *)malloc(1024);
+                        strcpy(tempStr, prevStringL);
+                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, (char *)(data + 1));
+                        lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
+                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        free(tempStr);
                     }
                 }
                 else
@@ -327,6 +414,8 @@ static void rx_task(void *arg)
                     lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+                    strcpy(prevStringL, "");
                     if (rightBubble)
                     {
                         lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
@@ -346,15 +435,31 @@ static void rx_task(void *arg)
                         lv_obj_set_width(ui_NewText, lv_pct(100));
                         lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
                         lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                        lv_label_set_recolor(ui_NewText, "true");
                         lv_label_set_text(ui_NewText, (char *)(data + 1));
                         lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+                        prev_label_L = ui_NewText;
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        prev_label = ui_NewText;
+                        if (data[0] & (1 << 2)) // if confirmed,
+                        {
+                            strcat(prevStringL, (char *)(data + 1));
+                            lv_label_set_text(prev_label_L, prevStringL);
+                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        }
+                        else
+                        {
+                            char *tempStr = (char *)malloc(1024);
+                            strcpy(tempStr, prevStringL);
+                            strcat(tempStr, " #818181 ");
+                            strcat(tempStr, (char *)(data + 1));
+                            lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
+                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                            free(tempStr);
+                        }
                     }
                     else
                     {
@@ -375,28 +480,35 @@ static void rx_task(void *arg)
                         lv_obj_set_width(ui_NewText, lv_pct(100));
                         lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
                         lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                        lv_label_set_recolor(ui_NewText, "true");
                         lv_label_set_text(ui_NewText, (char *)(data + 1));
                         lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                         lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-
+                        prev_label_L = ui_NewText;
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        prev_label = ui_NewText;
+                        if (data[0] & (1 << 2)) // if confirmed,
+                        {
+                            strcat(prevStringL, (char *)(data + 1));
+                            lv_label_set_text(prev_label_L, prevStringL);
+                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        }
+                        else
+                        {
+                            char *tempStr = (char *)malloc(1024);
+                            strcpy(tempStr, prevStringL);
+                            strcat(tempStr, " #818181 ");
+                            strcat(tempStr, (char *)(data + 1));
+                            lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
+                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                            free(tempStr);
+                        }
                     }
                 }
-                nextIsNew = false;
+                prevSpeakerL = data[0] & (1 << 0);
             }
-            else // not new, just update previous message
-            {
-                lv_label_set_text(prev_label, (char *)(data + 1));
-                lv_obj_scroll_to_view(prev_label, LV_ANIM_ON);
-            }
-            if (data[0] & (1 << 2))
-                nextIsNew = true; // Put this thing last after creating bubbles/updating text
-            else
-                nextIsNew = false;
         }
     }
     free(data);

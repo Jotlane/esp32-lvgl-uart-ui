@@ -226,35 +226,100 @@ static void rx_task(void *arg)
     // so store 4 strings speaker0/1 transcription/translation
     while (1)
     {
-        const int rxBytes = uart_read_bytes(UART_NUM_0, data, RX_BUF_SIZE, 1000 / portTICK_RATE_MS);
-        if (rxBytes > 0)
-        {
-            data[rxBytes] = '\0';
-            if ((data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if right speaker and translate
-            {
-                rightScreen = false;
-                rightBubble = false;
-            }
-            else if (!(data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if left speaker and translate
-            {
-                rightScreen = true;
-                rightBubble = false;
-            }
-            else if ((data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if right speaker and transcribe
-            {
-                rightScreen = true;
-                rightBubble = true;
-            }
-            else if (!(data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if left speaker and transcribe
-            {
-                rightScreen = false;
-                rightBubble = true;
-            }
+        const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 2, 1000 / portTICK_RATE_MS);
+        if (rxHeaderBytes <= 0) continue;
+        rightScreen = (data[0] & 1) != 0;
+        rightBubble = (data[0] & 2) == 0;
+        int length = (int)data[1];
 
-            if (rightScreen)
+        const int rxBytes = uart_read_bytes(UART_NUM_0, data+1, length, 1000 / portTICK_RATE_MS);
+
+        data[rxBytes+1] = '\0';
+        // if ((data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if right speaker and translate
+        // {
+        //     rightScreen = false;
+        //     rightBubble = false;
+        // }
+        // else if (!(data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if left speaker and translate
+        // {
+        //     rightScreen = true;
+        //     rightBubble = false;
+        // }
+        // else if ((data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if right speaker and transcribe
+        // {
+        //     rightScreen = true;
+        //     rightBubble = true;
+        // }
+        // else if (!(data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if left speaker and transcribe
+        // {
+        //     rightScreen = false;
+        //     rightBubble = true;
+        // }
+
+        if (rightScreen)
+        {
+            if ((data[0] & (1 << 1)) == prevSpeakerR) // if right speaker is speaking, and the right speaker was previously speaking on the screen
             {
-                if ((data[0] & (1 << 0)) == prevSpeakerR) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+                if (data[0] & (1 << 2)) // if confirmed,
                 {
+                    strcat(prevStringR, (char *)(data + 1));
+                    lv_label_set_text(prev_label_R, prevStringR);
+                    lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                }
+                else
+                {
+                    char *tempStr = (char *)malloc(1024);
+                    strcpy(tempStr, prevStringR);
+                    strcat(tempStr, " #818181 ");
+                    strcat(tempStr, (char *)(data + 1));
+                    lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
+                    lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                    free(tempStr);
+                }
+            }
+            else
+            {
+                lv_obj_t *ui_NewRow = lv_obj_create(ui_RightPanel);
+                lv_obj_set_width(ui_NewRow, lv_pct(100));
+                lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
+                lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
+                lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+                lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                strcpy(prevStringR, "");
+
+                if (rightBubble)
+                {
+                    lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
+                    lv_obj_set_width(ui_NewBubble, lv_pct(80));
+                    lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
+                    lv_obj_set_align(ui_NewBubble, LV_ALIGN_RIGHT_MID);
+                    lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+                    lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+                    lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
+                    lv_obj_set_width(ui_NewText, lv_pct(100));
+                    lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
+                    lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                    lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_label_set_recolor(ui_NewText, "true");
+                    lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    prev_label_R = ui_NewText;
+                    lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     if (data[0] & (1 << 2)) // if confirmed,
                     {
                         strcat(prevStringR, (char *)(data + 1));
@@ -274,117 +339,116 @@ static void rx_task(void *arg)
                 }
                 else
                 {
-                    lv_obj_t *ui_NewRow = lv_obj_create(ui_RightPanel);
-                    lv_obj_set_width(ui_NewRow, lv_pct(100));
-                    lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
-                    lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
-                    lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
+                    lv_obj_set_width(ui_NewBubble, lv_pct(80));
+                    lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
+                    lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
+                    lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-                    lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    strcpy(prevStringR, "");
+                    lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
 
-                    if (rightBubble)
+                    lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
+                    lv_obj_set_width(ui_NewText, lv_pct(100));
+                    lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
+                    lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                    lv_label_set_recolor(ui_NewText, "true");
+                    lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    prev_label_R = ui_NewText;
+                    lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
+                    if (data[0] & (1 << 2)) // if confirmed,
                     {
-                        lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
-                        lv_obj_set_width(ui_NewBubble, lv_pct(80));
-                        lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
-                        lv_obj_set_align(ui_NewBubble, LV_ALIGN_RIGHT_MID);
-                        lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                        lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-                        lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-
-                        lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
-                        lv_obj_set_width(ui_NewText, lv_pct(100));
-                        lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
-                        lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
-                        lv_label_set_text(ui_NewText, (char *)(data + 1));
-                        lv_label_set_recolor(ui_NewText, "true");
-                        lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        prev_label_R = ui_NewText;
-                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        if (data[0] & (1 << 2)) // if confirmed,
-                        {
-                            strcat(prevStringR, (char *)(data + 1));
-                            lv_label_set_text(prev_label_R, prevStringR);
-                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
-                        }
-                        else
-                        {
-                            char *tempStr = (char *)malloc(1024);
-                            strcpy(tempStr, prevStringR);
-                            strcat(tempStr, " #818181 ");
-                            strcat(tempStr, (char *)(data + 1));
-                            lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
-                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
-                            free(tempStr);
-                        }
+                        strcat(prevStringR, (char *)(data + 1));
+                        lv_label_set_text(prev_label_R, prevStringR);
+                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
                     }
                     else
                     {
-                        lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
-                        lv_obj_set_width(ui_NewBubble, lv_pct(80));
-                        lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
-                        lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
-                        lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                        lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-                        lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-
-                        lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
-                        lv_obj_set_width(ui_NewText, lv_pct(100));
-                        lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
-                        lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
-                        lv_label_set_recolor(ui_NewText, "true");
-                        lv_label_set_text(ui_NewText, (char *)(data + 1));
-                        lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        prev_label_R = ui_NewText;
-                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        if (data[0] & (1 << 2)) // if confirmed,
-                        {
-                            strcat(prevStringR, (char *)(data + 1));
-                            lv_label_set_text(prev_label_R, prevStringR);
-                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
-                        }
-                        else
-                        {
-                            char *tempStr = (char *)malloc(1024);
-                            strcpy(tempStr, prevStringR);
-                            strcat(tempStr, " #818181 ");
-                            strcat(tempStr, (char *)(data + 1));
-                            lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
-                            lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
-                            free(tempStr);
-                        }
+                        char *tempStr = (char *)malloc(1024);
+                        strcpy(tempStr, prevStringR);
+                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, (char *)(data + 1));
+                        lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
+                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        free(tempStr);
                     }
                 }
-                prevSpeakerR = data[0] & (1 << 0);
+            }
+            prevSpeakerR = data[0] & (1 << 1);
+        }
+        else
+        {
+            if ((data[0] & (1 << 1)) == prevSpeakerL) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+            {
+                if (data[0] & (1 << 2)) // if confirmed,
+                {
+                    strcat(prevStringL, (char *)(data + 1));
+                    lv_label_set_text(prev_label_L, prevStringL);
+                    lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                }
+                else
+                {
+                    char *tempStr = (char *)malloc(1024);
+                    strcpy(tempStr, prevStringL);
+                    strcat(tempStr, " #818181 ");
+                    strcat(tempStr, (char *)(data + 1));
+                    lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
+                    lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                    free(tempStr);
+                }
             }
             else
             {
-                if ((data[0] & (1 << 0)) == prevSpeakerL) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+                lv_obj_t *ui_NewRow = lv_obj_create(ui_LeftPanel);
+                lv_obj_set_width(ui_NewRow, lv_pct(100));
+                lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
+                lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
+                lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+
+                lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+                strcpy(prevStringL, "");
+                if (rightBubble)
                 {
+                    lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
+                    lv_obj_set_width(ui_NewBubble, lv_pct(80));
+                    lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
+                    lv_obj_set_align(ui_NewBubble, LV_ALIGN_RIGHT_MID);
+                    lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+                    lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+
+                    lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
+                    lv_obj_set_width(ui_NewText, lv_pct(100));
+                    lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
+                    lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                    lv_label_set_recolor(ui_NewText, "true");
+                    lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    prev_label_L = ui_NewText;
+                    lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     if (data[0] & (1 << 2)) // if confirmed,
                     {
                         strcat(prevStringL, (char *)(data + 1));
@@ -404,111 +468,51 @@ static void rx_task(void *arg)
                 }
                 else
                 {
-                    lv_obj_t *ui_NewRow = lv_obj_create(ui_LeftPanel);
-                    lv_obj_set_width(ui_NewRow, lv_pct(100));
-                    lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
-                    lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
-                    lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
+                    lv_obj_set_width(ui_NewBubble, lv_pct(80));
+                    lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
+                    lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
+                    lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
-                    lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_top(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                    lv_obj_set_style_pad_bottom(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
 
-                    strcpy(prevStringL, "");
-                    if (rightBubble)
+                    lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
+                    lv_obj_set_width(ui_NewText, lv_pct(100));
+                    lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
+                    lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
+                    lv_label_set_recolor(ui_NewText, "true");
+                    lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    prev_label_L = ui_NewText;
+                    lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
+                    if (data[0] & (1 << 2)) // if confirmed,
                     {
-                        lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
-                        lv_obj_set_width(ui_NewBubble, lv_pct(80));
-                        lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
-                        lv_obj_set_align(ui_NewBubble, LV_ALIGN_RIGHT_MID);
-                        lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                        lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-                        lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-
-                        lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
-                        lv_obj_set_width(ui_NewText, lv_pct(100));
-                        lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
-                        lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
-                        lv_label_set_recolor(ui_NewText, "true");
-                        lv_label_set_text(ui_NewText, (char *)(data + 1));
-                        lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        prev_label_L = ui_NewText;
-                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        if (data[0] & (1 << 2)) // if confirmed,
-                        {
-                            strcat(prevStringL, (char *)(data + 1));
-                            lv_label_set_text(prev_label_L, prevStringL);
-                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
-                        }
-                        else
-                        {
-                            char *tempStr = (char *)malloc(1024);
-                            strcpy(tempStr, prevStringL);
-                            strcat(tempStr, " #818181 ");
-                            strcat(tempStr, (char *)(data + 1));
-                            lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
-                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
-                            free(tempStr);
-                        }
+                        strcat(prevStringL, (char *)(data + 1));
+                        lv_label_set_text(prev_label_L, prevStringL);
+                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
                     }
                     else
                     {
-                        lv_obj_t *ui_NewBubble = lv_obj_create(ui_NewRow);
-                        lv_obj_set_width(ui_NewBubble, lv_pct(80));
-                        lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
-                        lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
-                        lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                        lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
-
-                        lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
-
-                        lv_obj_t *ui_NewText = lv_label_create(ui_NewBubble);
-                        lv_obj_set_width(ui_NewText, lv_pct(100));
-                        lv_obj_set_height(ui_NewText, LV_SIZE_CONTENT); /// 100
-                        lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
-                        lv_label_set_recolor(ui_NewText, "true");
-                        lv_label_set_text(ui_NewText, (char *)(data + 1));
-                        lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        lv_obj_set_style_pad_bottom(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
-                        prev_label_L = ui_NewText;
-                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
-                        if (data[0] & (1 << 2)) // if confirmed,
-                        {
-                            strcat(prevStringL, (char *)(data + 1));
-                            lv_label_set_text(prev_label_L, prevStringL);
-                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
-                        }
-                        else
-                        {
-                            char *tempStr = (char *)malloc(1024);
-                            strcpy(tempStr, prevStringL);
-                            strcat(tempStr, " #818181 ");
-                            strcat(tempStr, (char *)(data + 1));
-                            lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
-                            lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
-                            free(tempStr);
-                        }
+                        char *tempStr = (char *)malloc(1024);
+                        strcpy(tempStr, prevStringL);
+                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, (char *)(data + 1));
+                        lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
+                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        free(tempStr);
                     }
                 }
-                prevSpeakerL = data[0] & (1 << 0);
             }
+            prevSpeakerL = data[0] & (1 << 1);
         }
     }
     free(data);

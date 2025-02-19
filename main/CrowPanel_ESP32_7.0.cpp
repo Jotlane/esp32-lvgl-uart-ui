@@ -214,8 +214,8 @@ static void rx_task(void *arg)
     bool rightScreen = true; // Determines left/right panel and which language. dummy true
     bool rightBubble = true; // Determines bubble align and colour. dummy true
     bool nextIsNew = true;   // Determines if previous text was confirmed or not. True by default for first interaction
-    int prevSpeakerL = 0;    // 0 is left, 1 is right
-    int prevSpeakerR = 0;    // 0 is left, 1 is right
+    int prevSpeakerL = 2;    // 0 is left, 1 is right, 2 is no one
+    int prevSpeakerR = 2;    // 0 is left, 1 is right, 2 is no one
     char *prevStringL = (char *)malloc(1024);
     char *prevStringR = (char *)malloc(1024);
     strcpy(prevStringL, "");
@@ -224,17 +224,19 @@ static void rx_task(void *arg)
     // first will be unconfirmed. have a string stored for the speaker's transcription and translation. update the label with that string + the gray code and unconfirmed
     // if confirmed, append to the confirmed string and update
     // so store 4 strings speaker0/1 transcription/translation
+
     while (1)
     {
         const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 2, 1000 / portTICK_RATE_MS);
-        if (rxHeaderBytes <= 0) continue;
+        if (rxHeaderBytes <= 0)
+            continue;
         rightScreen = (data[0] & 1) != 0;
         rightBubble = (data[0] & 2) == 0;
         int length = (int)data[1];
 
-        const int rxBytes = uart_read_bytes(UART_NUM_0, data+1, length, 1000 / portTICK_RATE_MS);
+        const int rxBytes = uart_read_bytes(UART_NUM_0, data + 1, length, 1000 / portTICK_RATE_MS);
 
-        data[rxBytes+1] = '\0';
+        data[rxBytes + 1] = '\0';
         // if ((data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if right speaker and translate
         // {
         //     rightScreen = false;
@@ -324,7 +326,7 @@ static void rx_task(void *arg)
                     {
                         strcat(prevStringR, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, prevStringR);
-                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     }
                     else
                     {
@@ -333,7 +335,7 @@ static void rx_task(void *arg)
                         strcat(tempStr, " #818181 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
-                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                         free(tempStr);
                     }
                 }
@@ -344,7 +346,7 @@ static void rx_task(void *arg)
                     lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
                     lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0xBACDD5), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -370,7 +372,7 @@ static void rx_task(void *arg)
                     {
                         strcat(prevStringR, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, prevStringR);
-                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     }
                     else
                     {
@@ -379,7 +381,7 @@ static void rx_task(void *arg)
                         strcat(tempStr, " #818181 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
-                        lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                         free(tempStr);
                     }
                 }
@@ -453,7 +455,7 @@ static void rx_task(void *arg)
                     {
                         strcat(prevStringL, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, prevStringL);
-                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     }
                     else
                     {
@@ -462,7 +464,7 @@ static void rx_task(void *arg)
                         strcat(tempStr, " #818181 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
-                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                         free(tempStr);
                     }
                 }
@@ -473,7 +475,7 @@ static void rx_task(void *arg)
                     lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
                     lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0xBACDD5), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -498,7 +500,7 @@ static void rx_task(void *arg)
                     {
                         strcat(prevStringL, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, prevStringL);
-                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                     }
                     else
                     {
@@ -507,7 +509,7 @@ static void rx_task(void *arg)
                         strcat(tempStr, " #818181 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
-                        lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
+                        lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
                         free(tempStr);
                     }
                 }

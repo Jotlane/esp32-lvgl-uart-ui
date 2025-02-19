@@ -211,11 +211,15 @@ static void rx_task(void *arg)
     uint8_t *data = (uint8_t *)malloc(RX_BUF_SIZE + 1);
     lv_obj_t *prev_label_L = lv_label_create(ui_LeftPanel);
     lv_obj_t *prev_label_R = lv_label_create(ui_RightPanel);
+    lv_label_set_text(prev_label_L, "");
+    lv_label_set_text(prev_label_R, "");
     bool rightScreen = true; // Determines left/right panel and which language. dummy true
     bool rightBubble = true; // Determines bubble align and colour. dummy true
     bool nextIsNew = true;   // Determines if previous text was confirmed or not. True by default for first interaction
     int prevSpeakerL = 2;    // 0 is left, 1 is right, 2 is no one
     int prevSpeakerR = 2;    // 0 is left, 1 is right, 2 is no one
+    bool firstSpeechL = true;
+    bool firstSpeechR = true;
     char *prevStringL = (char *)malloc(1024);
     char *prevStringR = (char *)malloc(1024);
     strcpy(prevStringL, "");
@@ -260,7 +264,7 @@ static void rx_task(void *arg)
 
         if (rightScreen)
         {
-            if ((data[0] & (1 << 1)) == prevSpeakerR) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+            if (((data[0] & (1 << 1)) == prevSpeakerR) && (firstSpeechR == false)) // if right speaker is speaking, and the right speaker was previously speaking on the screen
             {
                 if (data[0] & (1 << 2)) // if confirmed,
                 {
@@ -387,10 +391,11 @@ static void rx_task(void *arg)
                 }
             }
             prevSpeakerR = data[0] & (1 << 1);
+            firstSpeechR = false;
         }
         else
         {
-            if ((data[0] & (1 << 1)) == prevSpeakerL) // if right speaker is speaking, and the right speaker was previously speaking on the screen
+            if (((data[0] & (1 << 1)) == prevSpeakerL) && firstSpeechL == false) // if right speaker is speaking, and the right speaker was previously speaking on the screen
             {
                 if (data[0] & (1 << 2)) // if confirmed,
                 {
@@ -515,6 +520,7 @@ static void rx_task(void *arg)
                 }
             }
             prevSpeakerL = data[0] & (1 << 1);
+            firstSpeechL = true;
         }
     }
     free(data);

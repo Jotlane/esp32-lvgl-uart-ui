@@ -7,7 +7,8 @@
 #define _SQUARELINE_PROJECT_UI_H
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include "lvgl.h"
@@ -15,40 +16,50 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
-// SCREEN: ui_Screen1
-void ui_Screen1_screen_init(void);
-extern lv_obj_t * ui_Screen1;
-extern lv_obj_t * ui_LeftPanel;
-extern lv_obj_t * ui_LeftTranscribe2;
-extern lv_obj_t * ui_LeftTranscribeBubble2;
-extern lv_obj_t * ui_LeftTranscribeText2;
-extern lv_obj_t * ui_LeftTranslate;
-extern lv_obj_t * ui_LeftTranslateBubble1;
-extern lv_obj_t * ui_LeftTranslateText1;
-extern lv_obj_t * ui_LeftTranscribe1;
-extern lv_obj_t * ui_LeftTranscribeBubble1;
-extern lv_obj_t * ui_LeftTranscribeText1;
-extern lv_obj_t * ui_RightPanel;
-extern lv_obj_t * ui_RightTranscribe;
-extern lv_obj_t * ui_RightTranscribeBubble;
-extern lv_obj_t * ui_RightTranscribeText;
-extern lv_obj_t * ui_RightTranslate;
-extern lv_obj_t * ui_RightTranslateBubble;
-extern lv_obj_t * ui_RightTranslateText;
-extern lv_obj_t * ui_RightTranscribe1;
-extern lv_obj_t * ui_RightTranscribeBubble1;
-extern lv_obj_t * ui_RightTranscribeText1;
-extern lv_obj_t * ui____initial_actions0;
+    // SCREEN: ui_Screen2
+    void ui_Screen2_screen_init(void);
+    extern lv_obj_t *ui_Screen2;
+    void ui_event_Chinese(lv_event_t *e);
+    extern lv_obj_t *ui_Chinese;
+    void ui_event_Thai(lv_event_t *e);
+    extern lv_obj_t *ui_Thai;
+    void ui_event_English(lv_event_t *e);
+    extern lv_obj_t *ui_English;
+    extern lv_obj_t *ui_Label1;
+    extern lv_obj_t *ui_Label2;
+    extern lv_obj_t *ui_Label3;
+    // SCREEN: ui_Screen1
+    void ui_Screen1_screen_init(void);
+    extern lv_obj_t *ui_Screen1;
+    extern lv_obj_t *ui_LeftPanel;
+    extern lv_obj_t *ui_LeftTranscribe2;
+    extern lv_obj_t *ui_LeftTranscribeBubble2;
+    extern lv_obj_t *ui_LeftTranscribeText2;
+    extern lv_obj_t *ui_LeftTranslate;
+    extern lv_obj_t *ui_LeftTranslateBubble1;
+    extern lv_obj_t *ui_LeftTranslateText1;
+    extern lv_obj_t *ui_LeftTranscribe1;
+    extern lv_obj_t *ui_LeftTranscribeBubble1;
+    extern lv_obj_t *ui_LeftTranscribeText1;
+    extern lv_obj_t *ui_RightPanel;
+    extern lv_obj_t *ui_RightTranscribe;
+    extern lv_obj_t *ui_RightTranscribeBubble;
+    extern lv_obj_t *ui_RightTranscribeText;
+    extern lv_obj_t *ui_RightTranslate;
+    extern lv_obj_t *ui_RightTranslateBubble;
+    extern lv_obj_t *ui_RightTranslateText;
+    extern lv_obj_t *ui_RightTranscribe1;
+    extern lv_obj_t *ui_RightTranscribeBubble1;
+    extern lv_obj_t *ui_RightTranscribeText1;
+    extern lv_obj_t *ui____initial_actions0;
 
+    LV_FONT_DECLARE(ui_font_Chinese);
+    LV_FONT_DECLARE(ui_font_Thai);
+    LV_FONT_DECLARE(ui_font_English);
 
+    extern lv_font_t *selected_font;
 
-
-
-LV_FONT_DECLARE(ui_font_Chinese);
-
-
-
-void ui_init(void);
+    void ui_init(void);
 
 #ifdef __cplusplus
 } /*extern "C"*/

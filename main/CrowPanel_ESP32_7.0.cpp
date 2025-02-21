@@ -204,6 +204,7 @@ static void tx_task(void *arg)
     }
 }
 // lv_label_set_recolor(ui_RightTranscribeText, "true");
+extern lv_font_t *selected_font;
 static void rx_task(void *arg)
 {
     static const char *RX_TASK_TAG = "RX_TASK";
@@ -319,7 +320,7 @@ static void rx_task(void *arg)
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
                     lv_label_set_recolor(ui_NewText, "true");
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(ui_NewText, selected_font, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -365,7 +366,7 @@ static void rx_task(void *arg)
                     lv_label_set_recolor(ui_NewText, "true");
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
-                    lv_obj_set_style_text_font(ui_NewText, &ui_font_Chinese, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_font(ui_NewText, selected_font, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_top(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -520,7 +521,7 @@ static void rx_task(void *arg)
                 }
             }
             prevSpeakerL = data[0] & (1 << 1);
-            firstSpeechL = true;
+            firstSpeechL = false;
         }
     }
     free(data);

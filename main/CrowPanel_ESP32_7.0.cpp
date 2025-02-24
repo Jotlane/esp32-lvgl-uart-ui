@@ -277,7 +277,7 @@ static void rx_task(void *arg)
                 {
                     char *tempStr = (char *)malloc(1024);
                     strcpy(tempStr, prevStringR);
-                    strcat(tempStr, " #818181 ");
+                    strcat(tempStr, " #898989 ");
                     strcat(tempStr, (char *)(data + 1));
                     lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
                     lv_obj_scroll_to_view(prev_label_R, LV_ANIM_ON);
@@ -291,6 +291,10 @@ static void rx_task(void *arg)
                 lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
                 lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
                 lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                lv_obj_set_style_bg_color(ui_NewRow, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_bg_opa(ui_NewRow, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_border_color(ui_NewRow, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_border_opa(ui_NewRow, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                 lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                 lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -305,8 +309,9 @@ static void rx_task(void *arg)
                     lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
                     lv_obj_set_align(ui_NewBubble, LV_ALIGN_RIGHT_MID);
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x278EFF), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_border_width(ui_NewBubble, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -319,6 +324,8 @@ static void rx_task(void *arg)
                     lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
                     lv_label_set_recolor(ui_NewText, "true");
+                    lv_obj_set_style_text_color(ui_NewText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_opa(ui_NewText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_font(ui_NewText, selected_font, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -337,7 +344,7 @@ static void rx_task(void *arg)
                     {
                         char *tempStr = (char *)malloc(1024);
                         strcpy(tempStr, prevStringR);
-                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, " #898989 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
@@ -351,8 +358,10 @@ static void rx_task(void *arg)
                     lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
                     lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0xBACDD5), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x26252A), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_border_width(ui_NewBubble, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -365,6 +374,8 @@ static void rx_task(void *arg)
                     lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
                     lv_label_set_recolor(ui_NewText, "true");
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_color(ui_NewText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_opa(ui_NewText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_font(ui_NewText, selected_font, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -383,7 +394,7 @@ static void rx_task(void *arg)
                     {
                         char *tempStr = (char *)malloc(1024);
                         strcpy(tempStr, prevStringR);
-                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, " #898989 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_R, tempStr); // but instead of data, it's prevStringR + gray code + data
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
@@ -408,7 +419,7 @@ static void rx_task(void *arg)
                 {
                     char *tempStr = (char *)malloc(1024);
                     strcpy(tempStr, prevStringL);
-                    strcat(tempStr, " #818181 ");
+                    strcat(tempStr, " #898989 ");
                     strcat(tempStr, (char *)(data + 1));
                     lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
                     lv_obj_scroll_to_view(prev_label_L, LV_ANIM_ON);
@@ -422,6 +433,10 @@ static void rx_task(void *arg)
                 lv_obj_set_height(ui_NewRow, LV_SIZE_CONTENT); /// 1
                 lv_obj_set_align(ui_NewRow, LV_ALIGN_CENTER);
                 lv_obj_clear_flag(ui_NewRow, LV_OBJ_FLAG_SCROLLABLE); /// Flags
+                lv_obj_set_style_bg_color(ui_NewRow, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_bg_opa(ui_NewRow, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_border_color(ui_NewRow, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+                lv_obj_set_style_border_opa(ui_NewRow, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                 lv_obj_set_style_pad_left(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                 lv_obj_set_style_pad_right(ui_NewRow, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -438,6 +453,7 @@ static void rx_task(void *arg)
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
                     lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x64BDDD), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_border_width(ui_NewBubble, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -450,6 +466,8 @@ static void rx_task(void *arg)
                     lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
                     lv_label_set_recolor(ui_NewText, "true");
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_color(ui_NewText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_opa(ui_NewText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -467,7 +485,7 @@ static void rx_task(void *arg)
                     {
                         char *tempStr = (char *)malloc(1024);
                         strcpy(tempStr, prevStringL);
-                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, " #898989 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
@@ -481,8 +499,9 @@ static void rx_task(void *arg)
                     lv_obj_set_height(ui_NewBubble, LV_SIZE_CONTENT); /// 1
                     lv_obj_set_align(ui_NewBubble, LV_ALIGN_LEFT_MID);
                     lv_obj_clear_flag(ui_NewBubble, LV_OBJ_FLAG_SCROLLABLE); /// Flags
-                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0xBACDD5), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_bg_color(ui_NewBubble, lv_color_hex(0x26252A), LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_bg_opa(ui_NewBubble, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_border_width(ui_NewBubble, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
 
                     lv_obj_set_style_pad_left(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewBubble, 0, LV_PART_SCROLLBAR | LV_STATE_DEFAULT);
@@ -495,6 +514,8 @@ static void rx_task(void *arg)
                     lv_obj_set_align(ui_NewText, LV_ALIGN_RIGHT_MID);
                     lv_label_set_recolor(ui_NewText, "true");
                     lv_label_set_text(ui_NewText, (char *)(data + 1));
+                    lv_obj_set_style_text_color(ui_NewText, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+                    lv_obj_set_style_text_opa(ui_NewText, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_text_align(ui_NewText, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_left(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                     lv_obj_set_style_pad_right(ui_NewText, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -512,7 +533,7 @@ static void rx_task(void *arg)
                     {
                         char *tempStr = (char *)malloc(1024);
                         strcpy(tempStr, prevStringL);
-                        strcat(tempStr, " #818181 ");
+                        strcat(tempStr, " #898989 ");
                         strcat(tempStr, (char *)(data + 1));
                         lv_label_set_text(prev_label_L, tempStr); // but instead of data, it's prevStringR + gray code + data
                         lv_obj_scroll_to_view(ui_NewRow, LV_ANIM_ON);
@@ -526,6 +547,13 @@ static void rx_task(void *arg)
     }
     free(data);
 }
+
+// Your own speech (blue): #278EFF
+// Other speech (black) #26252A
+// Unconfirmed text (gray): #898989
+// Confirmed text (white): #FFFFFF
+// Check with ui people for the text boxes because that's not how it works with the model. Otherwise seems they put the opacity at 50% for unconfirmed text boxes
+// Background: #000000
 
 // FreeRTOS stuff
 void lvgl_task(void *pvParameter);

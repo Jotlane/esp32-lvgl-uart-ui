@@ -51,7 +51,11 @@ extern "C"
     extern lv_obj_t *ui_RightTranscribe1;
     extern lv_obj_t *ui_RightTranscribeBubble1;
     extern lv_obj_t *ui_RightTranscribeText1;
+    extern lv_obj_t *ui_Panel1;
+    extern lv_obj_t *ui_Image1;
     extern lv_obj_t *ui____initial_actions0;
+
+    LV_IMG_DECLARE(ui_img_speaker_png); // assets/speaker.png
 
     LV_FONT_DECLARE(ui_font_Chinese);
     LV_FONT_DECLARE(ui_font_Thai);

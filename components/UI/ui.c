@@ -44,6 +44,8 @@ lv_obj_t *ui_RightTranslateText;
 lv_obj_t *ui_RightTranscribe1;
 lv_obj_t *ui_RightTranscribeBubble1;
 lv_obj_t *ui_RightTranscribeText1;
+lv_obj_t *ui_Panel1;
+lv_obj_t *ui_Image1;
 lv_obj_t *ui____initial_actions0;
 lv_font_t *selected_font;
 ///////////////////// TEST LVGL SETTINGS ////////////////////

@@ -1,6 +1,9 @@
+ui_Screen2.c
 ui_Screen1.c
 ui.c
 ui_comp_hook.c
 ui_helpers.c
+ui_img_speaker_png.c
 fonts/ui_font_Chinese.c
+fonts/ui_font_English.c
 fonts/ui_font_Thai.c

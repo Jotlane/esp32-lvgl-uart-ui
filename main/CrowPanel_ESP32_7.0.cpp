@@ -1002,8 +1002,13 @@ extern "C" void app_main()
     xTaskCreate(tx_task, "uart_tx_task", 1024 * 2, NULL, configMAX_PRIORITIES - 1, NULL);
 }
 // ui_Screen1.c/the chat screen: copy but remove all the nonsense and copy the stylings over to this one
-// ui_Screen2.c/the language select screen: copy all
-// ui.c : copy over with care, change the ui_event stuff for the buttons to set the languages correctly. add the variables, the actual variables are made in ui.h
-// ui.h: copy fully then add the extern variables
-
-// todo startscreen: make events for all the buttons
+// ui_Screen2.c/the language select screen: copy paste the button stuff for each one with the correct language int and setting selected language to true
+// ui.c : copy over with care, change the ui_event stuff for the buttons to set the correct language int and setting selected language to true. change initial starting screen
+// ui.h: copy fully then add the extern variables from ui.c
+// here: change the thing to accept 2 selected languages in the chat code
+// python: make it possible to send stuff over in the new formats
+// cmakelist: copy over items, keeping format
+// filelist: copy over
+//
+//
+// check if the current code works still first before transferring in the above stuff good not boreked

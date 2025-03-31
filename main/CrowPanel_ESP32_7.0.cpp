@@ -193,14 +193,35 @@ int sendData(const char *logName, const char *data)
     return txBytes;
 }
 
+// CHange to extern?
+int screenState = 0;
+bool lang_selected = false;
+uint8_t AAA = 0b101; // First 3-bit value
+uint8_t BBB = 0b011; // Second 3-bit value
+
 static void tx_task(void *arg)
 {
-    static const char *TX_TASK_TAG = "TX_TASK";
-    esp_log_level_set(TX_TASK_TAG, ESP_LOG_INFO);
     while (1)
     {
-        // sendData(TX_TASK_TAG, "Hello world");
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        if (screenState == 0)
+        {
+            uint8_t num = 64; // 0x40 in hex
+            uart_write_bytes(UART_NUM_0, &num, sizeof(num));
+        }
+        else if (screenState == 1)
+        {
+            if (lang_selected)
+            {
+                uint8_t message = (0b11 << 6) | ((AAA & 0b111) << 3) | (BBB & 0b111);
+                uart_write_bytes(UART_NUM_0, &message, sizeof(message));
+            }
+        }
+        else if (screenState == 2)
+        {
+            // nothing
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100)); // Prevent CPU overuse in FreeRTOS
     }
 }
 // lv_label_set_recolor(ui_RightTranscribeText, "true");
@@ -232,6 +253,50 @@ static void rx_task(void *arg)
 
     while (1)
     {
+        if (screenState == 0)
+        {
+            const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 1, 1000 / portTICK_RATE_MS);
+            if (rxHeaderBytes <= 0)
+                continue;
+            if (data[0] == 128)
+            {
+                screenState = 1;
+                // change screen to language select screen
+                //_ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Screen1_screen_init);
+            };
+        }
+        else if (screenState == 1)
+        {
+            // check if langguages are selected message from jetson
+            const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 1, 1000 / portTICK_RATE_MS);
+            if (rxHeaderBytes <= 0)
+                continue;
+            if ((data[0] >> 6) == 0b11)
+            {
+                uint8_t xxx = (data[0] >> 3) & 0b111;
+                switch (xxx)
+                {
+                case 0:
+                    // en,zh,id,hi,ms,tl,vi,th
+                    break;
+                }
+
+                uint8_t yyy = data[0] & 0b111;
+                switch (yyy)
+                {
+                case 0:
+                    // set the selected language
+                    break;
+                }
+                // change screen to chat screen
+                //_ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Screen1_screen_init);
+            }
+        }
+        else if (screenState == 2)
+        {
+            // the usual chat stuff
+        }
+
         const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 2, 1000 / portTICK_RATE_MS);
         if (rxHeaderBytes <= 0)
             continue;
@@ -242,27 +307,6 @@ static void rx_task(void *arg)
         const int rxBytes = uart_read_bytes(UART_NUM_0, data + 1, length, 1000 / portTICK_RATE_MS);
 
         data[rxBytes + 1] = '\0';
-        // if ((data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if right speaker and translate
-        // {
-        //     rightScreen = false;
-        //     rightBubble = false;
-        // }
-        // else if (!(data[0] & (1 << 0)) && (data[0] & (1 << 1))) // if left speaker and translate
-        // {
-        //     rightScreen = true;
-        //     rightBubble = false;
-        // }
-        // else if ((data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if right speaker and transcribe
-        // {
-        //     rightScreen = true;
-        //     rightBubble = true;
-        // }
-        // else if (!(data[0] & (1 << 0)) && !(data[0] & (1 << 1))) // if left speaker and transcribe
-        // {
-        //     rightScreen = false;
-        //     rightBubble = true;
-        // }
-
         if (rightScreen)
         {
             if (((data[0] & (1 << 1)) == prevSpeakerR) && (firstSpeechR == false)) // if right speaker is speaking, and the right speaker was previously speaking on the screen
@@ -621,3 +665,7 @@ extern "C" void app_main()
     xTaskCreate(rx_task, "uart_rx_task", 1024 * 2, NULL, configMAX_PRIORITIES, NULL);
     xTaskCreate(tx_task, "uart_tx_task", 1024 * 2, NULL, configMAX_PRIORITIES - 1, NULL);
 }
+// ui_Screen1.c/the chat screen: copy but remove all the nonsense and copy the stylings over to this one
+// ui_Screen2.c/the language select screen: copy all
+// ui.c : copy over with care, change the ui_event stuff for the buttons to set the languages correctly. add the variables, the actual variables are made in ui.h
+// ui.h: copy fully then add the extern variables

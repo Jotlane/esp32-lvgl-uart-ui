@@ -197,8 +197,8 @@ int sendData(const char *logName, const char *data)
 int screenState = 0;
 extern lv_font_t *selected_font_1;
 extern lv_font_t *selected_font_2;
-extern bool lang_selected_1 = false;
-extern bool lang_selected_2 = false;
+extern bool lang_selected_1;
+extern bool lang_selected_2;
 extern uint8_t selected_lang_1;
 extern uint8_t selected_lang_2;
 
@@ -256,6 +256,51 @@ static void rx_task(void *arg)
 
     while (1)
     {
+        const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 1, 1000 / portTICK_RATE_MS);
+        if (rxHeaderBytes <= 0)
+            continue;
+        if (data[0] == 128)
+        {
+            screenState = 1;
+            // change screen to language select screen
+            //_ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Screen1_screen_init);
+        }
+        else if ((data[0] >> 6) == 0b11)
+        {
+            uint8_t xxx = (data[0] >> 3) & 0b111;
+            switch (xxx)
+            {
+            case 0:
+                // en,zh,id,hi,ms,tl,vi,th
+                // selected_font_1 = &ui_font_Chinese; for example
+                break;
+            }
+
+            uint8_t yyy = data[0] & 0b111;
+            switch (yyy)
+            {
+            case 0:
+                // set the selected language
+                break;
+            }
+            // change screen to chat screen
+            //_ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Screen1_screen_init);
+            screenState = 2;
+        }
+        else
+        {
+            rightScreen = (data[0] & 1) != 0;
+            rightBubble = (data[0] & 2) == 0;
+            const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data + 1, 1, 1000 / portTICK_RATE_MS);
+            int length = (int)data[1];
+            const int rxBytes = uart_read_bytes(UART_NUM_0, data + 1, length, 1000 / portTICK_RATE_MS);
+            // from here continue as per normal
+        }
+
+        //
+        //
+        //
+
         if (screenState == 0)
         {
             const int rxHeaderBytes = uart_read_bytes(UART_NUM_0, data, 1, 1000 / portTICK_RATE_MS);

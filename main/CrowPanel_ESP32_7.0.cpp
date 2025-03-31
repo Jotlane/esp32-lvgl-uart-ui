@@ -195,9 +195,12 @@ int sendData(const char *logName, const char *data)
 
 // CHange to extern?
 int screenState = 0;
-bool lang_selected = false;
-uint8_t AAA = 0b101; // First 3-bit value
-uint8_t BBB = 0b011; // Second 3-bit value
+extern lv_font_t *selected_font_1;
+extern lv_font_t *selected_font_2;
+extern bool lang_selected_1 = false;
+extern bool lang_selected_2 = false;
+extern uint8_t selected_lang_1;
+extern uint8_t selected_lang_2;
 
 static void tx_task(void *arg)
 {
@@ -210,9 +213,9 @@ static void tx_task(void *arg)
         }
         else if (screenState == 1)
         {
-            if (lang_selected)
+            if (lang_selected_1 && lang_selected_2)
             {
-                uint8_t message = (0b11 << 6) | ((AAA & 0b111) << 3) | (BBB & 0b111);
+                uint8_t message = (0b11 << 6) | ((selected_lang_1 & 0b111) << 3) | (selected_lang_2 & 0b111);
                 uart_write_bytes(UART_NUM_0, &message, sizeof(message));
             }
         }
@@ -278,6 +281,7 @@ static void rx_task(void *arg)
                 {
                 case 0:
                     // en,zh,id,hi,ms,tl,vi,th
+                    // selected_font_1 = &ui_font_Chinese; for example
                     break;
                 }
 
@@ -290,6 +294,7 @@ static void rx_task(void *arg)
                 }
                 // change screen to chat screen
                 //_ui_screen_change(&ui_Screen1, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Screen1_screen_init);
+                screenState = 2;
             }
         }
         else if (screenState == 2)
@@ -669,3 +674,5 @@ extern "C" void app_main()
 // ui_Screen2.c/the language select screen: copy all
 // ui.c : copy over with care, change the ui_event stuff for the buttons to set the languages correctly. add the variables, the actual variables are made in ui.h
 // ui.h: copy fully then add the extern variables
+
+// todo startscreen: make events for all the buttons

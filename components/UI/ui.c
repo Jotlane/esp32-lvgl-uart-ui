@@ -48,6 +48,24 @@ lv_obj_t *ui_Panel1;
 lv_obj_t *ui_Image1;
 lv_obj_t *ui____initial_actions0;
 lv_font_t *selected_font;
+
+lv_font_t *selected_font_1;
+lv_font_t *selected_font_2;
+bool lang_selected_1 = false;
+bool lang_selected_2 = false;
+uint8_t selected_lang_1;
+uint8_t selected_lang_2;
+// void ui_event_Sample_Chinese(lv_event_t *e)
+// {
+//     lv_event_code_t event_code = lv_event_get_code(e);
+//     lv_obj_t *target = lv_event_get_target(e);
+//     if (event_code == LV_EVENT_CLICKED)
+//     {
+//         selected_lang_1 = 1;
+//         lang_selected_1 = true;
+//     }
+// }
+
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
 #error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"

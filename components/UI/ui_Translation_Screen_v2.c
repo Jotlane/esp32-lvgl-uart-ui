@@ -489,4 +489,6 @@ void ui_Translation_Screen_v2_screen_init(void)
     lv_obj_set_style_pad_right(ui_Type_D_Text1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_top(ui_Type_D_Text1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_pad_bottom(ui_Type_D_Text1, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    lv_obj_add_event_cb(ui_Return_Button, ui_event_Return_Button, LV_EVENT_ALL, NULL);
 }

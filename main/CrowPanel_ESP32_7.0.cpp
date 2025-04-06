@@ -722,3 +722,5 @@ extern "C" void app_main()
 // add new things to ui.c and ui.h
 //    lv_obj_set_x(ui_English_Button5, 0); lv_obj_set_y(ui_English_Button5, -137); for the selected langauge
 // lv_label_set_text(prev_label_R, tempStr); for the confirm button
+
+// Alright nice next todo: do the same for the opposite panel and we're good

@@ -352,6 +352,33 @@ void ui_Start_Screen_v2_screen_init(void)
     lv_obj_set_style_text_opa(ui_Label44, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_text_font(ui_Label44, &ui_font_Noto_Sans_Regular_Thai_Looped, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_Confirm_Button = lv_btn_create(ui_Panel_User_5);
+    lv_obj_set_width(ui_Confirm_Button, 116);
+    lv_obj_set_height(ui_Confirm_Button, 32);
+    lv_obj_set_x(ui_Confirm_Button, 155);
+    lv_obj_set_y(ui_Confirm_Button, 137);
+    lv_obj_set_align(ui_Confirm_Button, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Confirm_Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS); /// Flags
+    lv_obj_clear_flag(ui_Confirm_Button, LV_OBJ_FLAG_SCROLLABLE);    /// Flags
+    lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Confirm_Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_color(ui_Confirm_Button, lv_color_hex(0x144A82), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_opa(ui_Confirm_Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_border_width(ui_Confirm_Button, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_color(ui_Confirm_Button, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_opa(ui_Confirm_Button, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_align(ui_Confirm_Button, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Confirm_Button, &lv_font_montserrat_8, LV_PART_MAIN | LV_STATE_DEFAULT);
+
+    ui_Confirm_Label = lv_label_create(ui_Confirm_Button);
+    lv_obj_set_width(ui_Confirm_Label, LV_SIZE_CONTENT);  /// 1
+    lv_obj_set_height(ui_Confirm_Label, LV_SIZE_CONTENT); /// 1
+    lv_obj_set_align(ui_Confirm_Label, LV_ALIGN_CENTER);
+    lv_label_set_text(ui_Confirm_Label, "Confirm");
+    lv_obj_set_style_text_color(ui_Confirm_Label, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_opa(ui_Confirm_Label, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     ui_Bahasa_Melayu_Button5 = lv_btn_create(ui_Panel_User_6);
     lv_obj_set_width(ui_Bahasa_Melayu_Button5, 124);
     lv_obj_set_height(ui_Bahasa_Melayu_Button5, 32);
@@ -488,4 +515,5 @@ void ui_Start_Screen_v2_screen_init(void)
     lv_obj_add_event_cb(ui_Vietnamese_Button5, ui_event_Vietnamese_Button5, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Hindi_Button5, ui_event_Hindi_Button5, LV_EVENT_ALL, NULL);
     lv_obj_add_event_cb(ui_Filipino_Button5, ui_event_Filipino_Button5, LV_EVENT_ALL, NULL);
+    lv_obj_add_event_cb(ui_Confirm_Button, ui_event_Confirm_Button, LV_EVENT_ALL, NULL);
 }

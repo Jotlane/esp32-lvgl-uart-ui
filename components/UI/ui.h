@@ -84,6 +84,9 @@ extern "C"
     void ui_event_Filipino_Button4(lv_event_t *e);
     extern lv_obj_t *ui_Filipino_Button4;
     extern lv_obj_t *ui_Label41;
+    void ui_event_Confirm_Button(lv_event_t *e);
+    extern lv_obj_t *ui_Confirm_Button;
+    extern lv_obj_t *ui_Confirm_Label;
     extern lv_obj_t *ui_Spacer_Bar_White2;
     extern lv_obj_t *ui_Optional_Text1;
     extern lv_obj_t *ui_language_icon1;

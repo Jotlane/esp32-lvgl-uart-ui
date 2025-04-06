@@ -77,6 +77,8 @@ lv_obj_t *ui_Label40;
 void ui_event_Filipino_Button4(lv_event_t *e);
 lv_obj_t *ui_Filipino_Button4;
 lv_obj_t *ui_Label41;
+lv_obj_t *ui_Confirm_Button;
+lv_obj_t *ui_Confirm_Label;
 lv_obj_t *ui_Spacer_Bar_White2;
 lv_obj_t *ui_Optional_Text1;
 lv_obj_t *ui_language_icon1;
@@ -368,6 +370,15 @@ void ui_event_Filipino_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 5;
+        lang_selected_2 = true;
+    }
+}
+void ui_event_Confirm_Button(lv_event_t *e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t *target = lv_event_get_target(e);
+    if (event_code == LV_EVENT_CLICKED)
+    {
         lang_selected_2 = true;
     }
 }

@@ -6,6 +6,7 @@ ui_Translation_Screen_v2.c
 ui.c
 ui_comp_hook.c
 ui_helpers.c
+ui_img_globe_grey_png.c
 ui_img_mic_icon_png.c
 ui_img_mic_icon_inactive_png.c
 ui_img_mic_icon_active_png.c

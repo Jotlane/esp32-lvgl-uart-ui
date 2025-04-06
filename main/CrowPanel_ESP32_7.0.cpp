@@ -708,3 +708,11 @@ extern "C" void app_main()
 //
 //
 // check if the current code works still first before transferring in the above stuff good not boreked
+//
+// new todo
+// Make selected thing. When button pressed, change location of the thing to the button's location. Set confirm button to visible, and change the text within
+// selected language should stay the same, but the boolean is now activated by the confirm button. Confirm button makes everything invisible? Or changes colour or something?
+// Screen back button on the chat sends b10000000 and does nothing else
+// add new things to ui.c and ui.h
+//    lv_obj_set_x(ui_English_Button5, 0); lv_obj_set_y(ui_English_Button5, -137); for the selected langauge
+// lv_label_set_text(prev_label_R, tempStr); for the confirm button

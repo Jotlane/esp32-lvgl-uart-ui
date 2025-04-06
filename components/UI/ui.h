@@ -59,6 +59,7 @@ extern "C"
     void ui_Start_Screen_v2_screen_init(void);
     extern lv_obj_t *ui_Start_Screen_v2;
     extern lv_obj_t *ui_Panel_User_5;
+    extern lv_obj_t *ui_Selected_Bubble;
     void ui_event_English_Button4(lv_event_t *e);
     extern lv_obj_t *ui_English_Button4;
     extern lv_obj_t *ui_Label1;
@@ -85,6 +86,7 @@ extern "C"
     extern lv_obj_t *ui_Label41;
     extern lv_obj_t *ui_Spacer_Bar_White2;
     extern lv_obj_t *ui_Optional_Text1;
+    extern lv_obj_t *ui_language_icon1;
     extern lv_obj_t *ui_Panel_User_6;
     void ui_event_English_Button5(lv_event_t *e);
     extern lv_obj_t *ui_English_Button5;
@@ -194,6 +196,7 @@ extern "C"
     LV_IMG_DECLARE(ui_img_mic_icon_inactive_png); // assets/Mic Icon Inactive.png
     LV_IMG_DECLARE(ui_img_mic_icon_active_png);   // assets/Mic Icon Active.png
     LV_IMG_DECLARE(ui_img_1221162986);            // assets/KLASSES Logo (recreated) 1024x1024.png
+    LV_IMG_DECLARE(ui_img_globe_grey_png);        // assets/globe_grey.png
 
     LV_FONT_DECLARE(ui_font_Noto_Sans_Regular);
     LV_FONT_DECLARE(ui_font_Noto_Sans_Regular_Devanagari);

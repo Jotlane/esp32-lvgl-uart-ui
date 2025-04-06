@@ -229,6 +229,8 @@ void ui_event_English_Button4(lv_event_t *e)
         selected_lang_1 = 0;
         lv_obj_set_y(ui_Selected_Bubble, -137);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "Confirm");
     }
 }
 void ui_event_Chinese_Button4(lv_event_t *e)
@@ -240,6 +242,8 @@ void ui_event_Chinese_Button4(lv_event_t *e)
         selected_lang_1 = 1;
         lv_obj_set_y(ui_Selected_Bubble, -98);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular_SC, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "确认");
     }
 }
 void ui_event_Thai_Button4(lv_event_t *e)
@@ -251,6 +255,8 @@ void ui_event_Thai_Button4(lv_event_t *e)
         selected_lang_1 = 7;
         lv_obj_set_y(ui_Selected_Bubble, 59);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular_Thai_Looped, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "ยืนยัน");
     }
 }
 void ui_event_Bahasa_Melayu_Button4(lv_event_t *e)
@@ -262,6 +268,8 @@ void ui_event_Bahasa_Melayu_Button4(lv_event_t *e)
         selected_lang_1 = 4;
         lv_obj_set_y(ui_Selected_Bubble, -59);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "Sahkan");
     }
 }
 void ui_event_Bahasa_Indonesia_Button4(lv_event_t *e)
@@ -273,6 +281,8 @@ void ui_event_Bahasa_Indonesia_Button4(lv_event_t *e)
         selected_lang_1 = 2;
         lv_obj_set_y(ui_Selected_Bubble, -19);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "Konfirmasi");
     }
 }
 void ui_event_Vietnamese_Button4(lv_event_t *e)
@@ -284,6 +294,8 @@ void ui_event_Vietnamese_Button4(lv_event_t *e)
         selected_lang_1 = 6;
         lv_obj_set_y(ui_Selected_Bubble, 98);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "Xác nhận");
     }
 }
 void ui_event_Hindi_Button4(lv_event_t *e)
@@ -295,6 +307,8 @@ void ui_event_Hindi_Button4(lv_event_t *e)
         selected_lang_1 = 3;
         lv_obj_set_y(ui_Selected_Bubble, 19);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular_Devanagari, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "पुष्टि करें");
     }
 }
 void ui_event_Filipino_Button4(lv_event_t *e)
@@ -306,6 +320,8 @@ void ui_event_Filipino_Button4(lv_event_t *e)
         selected_lang_1 = 5;
         lv_obj_set_y(ui_Selected_Bubble, 137);
         lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label, "Kumpirmahin");
     }
 }
 void ui_event_English_Button5(lv_event_t *e)

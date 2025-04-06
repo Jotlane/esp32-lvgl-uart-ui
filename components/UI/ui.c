@@ -168,6 +168,8 @@ lv_obj_t *ui_Status_Panel1;
 lv_obj_t *ui_Icon_Mic1;
 lv_obj_t *ui_Icon_Mic_Inactive1;
 lv_obj_t *ui_Icon_Mic_Active1;
+lv_obj_t *ui_language;
+lv_obj_t *ui_arrow;
 lv_obj_t *ui_Dialogue_User_4;
 lv_obj_t *ui_Type_A_Panel_1;
 lv_obj_t *ui_Type_A_Bubble_1;

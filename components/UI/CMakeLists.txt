@@ -16,6 +16,7 @@ idf_component_register(SRCS
             "ui_font_Noto_Sans_Regular_SC.c"
             "ui_font_Noto_Sans_Regular_Thai_Looped.c"
             "ui_img_globe_grey_png.c"
+            "ui_img_707704911.c"
 
     INCLUDE_DIRS "."
     PRIV_REQUIRES lvgl-3)

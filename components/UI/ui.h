@@ -173,6 +173,8 @@ extern "C"
     extern lv_obj_t *ui_Icon_Mic1;
     extern lv_obj_t *ui_Icon_Mic_Inactive1;
     extern lv_obj_t *ui_Icon_Mic_Active1;
+    extern lv_obj_t *ui_language;
+    extern lv_obj_t *ui_arrow;
     extern lv_obj_t *ui_Dialogue_User_4;
     extern lv_obj_t *ui_Type_A_Panel_1;
     extern lv_obj_t *ui_Type_A_Bubble_1;
@@ -200,6 +202,7 @@ extern "C"
     LV_IMG_DECLARE(ui_img_mic_icon_active_png);   // assets/Mic Icon Active.png
     LV_IMG_DECLARE(ui_img_1221162986);            // assets/KLASSES Logo (recreated) 1024x1024.png
     LV_IMG_DECLARE(ui_img_globe_grey_png);        // assets/globe_grey.png
+    LV_IMG_DECLARE(ui_img_707704911);             // assets/chevron-right_grey.png
 
     LV_FONT_DECLARE(ui_font_Noto_Sans_Regular);
     LV_FONT_DECLARE(ui_font_Noto_Sans_Regular_Devanagari);

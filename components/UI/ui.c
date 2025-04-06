@@ -192,7 +192,7 @@ const lv_font_t *selected_font_1;
 const lv_font_t *selected_font_2;
 bool lang_selected_1 = false;
 bool lang_selected_2 = false;
-uint8_t selected_lang_1;
+uint8_t selected_lang_1 = 99;
 uint8_t selected_lang_2;
 
 bool exit_flag = false;
@@ -410,7 +410,7 @@ void ui_event_Confirm_Button(lv_event_t *e)
     lv_obj_t *target = lv_event_get_target(e);
     if (event_code == LV_EVENT_CLICKED)
     {
-        if (selected_lang_1)
+        if (selected_lang_1 != 99)
         {
             lang_selected_1 = true;
             lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x144A82), LV_PART_MAIN | LV_STATE_DEFAULT);

@@ -194,6 +194,9 @@ bool lang_selected_1 = false;
 bool lang_selected_2 = false;
 uint8_t selected_lang_1;
 uint8_t selected_lang_2;
+
+bool exit_flag = false;
+
 // en,zh,id,hi,ms,tl,vi,th
 // void ui_event_Sample_Chinese(lv_event_t *e)
 // {
@@ -405,7 +408,7 @@ void ui_event_Return_Button(lv_event_t *e)
     lv_obj_t *target = lv_event_get_target(e);
     if (event_code == LV_EVENT_CLICKED)
     {
-        _ui_screen_change(&ui_Start_Screen_v2, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Start_Screen_v2_screen_init);
+        exit_flag = true;
     }
 }
 

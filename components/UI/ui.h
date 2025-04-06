@@ -198,6 +198,7 @@ extern "C"
     extern bool lang_selected_2;
     extern uint8_t selected_lang_1;
     extern uint8_t selected_lang_2;
+    extern bool exit_flag;
 
     LV_IMG_DECLARE(ui_img_mic_icon_png);          // assets/mic icon.png
     LV_IMG_DECLARE(ui_img_mic_icon_inactive_png); // assets/Mic Icon Inactive.png

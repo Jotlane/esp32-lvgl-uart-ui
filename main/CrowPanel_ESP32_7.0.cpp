@@ -201,6 +201,7 @@ extern bool lang_selected_1;
 extern bool lang_selected_2;
 extern uint8_t selected_lang_1;
 extern uint8_t selected_lang_2;
+extern bool exit_flag;
 
 static void tx_task(void *arg)
 {
@@ -221,7 +222,12 @@ static void tx_task(void *arg)
         }
         else if (screenState == 2)
         {
-            // nothing
+            if (exit_flag)
+            {
+                exit_flag = false;
+                uint8_t num = 128;
+                uart_write_bytes(UART_NUM_0, &num, sizeof(num));
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(100)); // Prevent CPU overuse in FreeRTOS

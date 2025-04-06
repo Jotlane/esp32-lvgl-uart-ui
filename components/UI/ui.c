@@ -220,7 +220,8 @@ void ui_event_English_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 0;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, -137);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Chinese_Button4(lv_event_t *e)
@@ -230,7 +231,8 @@ void ui_event_Chinese_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 1;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, -98);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Thai_Button4(lv_event_t *e)
@@ -240,7 +242,8 @@ void ui_event_Thai_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 7;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, 59);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Bahasa_Melayu_Button4(lv_event_t *e)
@@ -250,7 +253,8 @@ void ui_event_Bahasa_Melayu_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 4;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, -59);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Bahasa_Indonesia_Button4(lv_event_t *e)
@@ -260,7 +264,8 @@ void ui_event_Bahasa_Indonesia_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 2;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, -19);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Vietnamese_Button4(lv_event_t *e)
@@ -270,7 +275,8 @@ void ui_event_Vietnamese_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 6;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, 98);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Hindi_Button4(lv_event_t *e)
@@ -280,7 +286,8 @@ void ui_event_Hindi_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 3;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, 19);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_Filipino_Button4(lv_event_t *e)
@@ -290,7 +297,8 @@ void ui_event_Filipino_Button4(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_1 = 5;
-        lang_selected_1 = true;
+        lv_obj_set_y(ui_Selected_Bubble, 137);
+        lv_obj_clear_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
     }
 }
 void ui_event_English_Button5(lv_event_t *e)
@@ -379,7 +387,11 @@ void ui_event_Confirm_Button(lv_event_t *e)
     lv_obj_t *target = lv_event_get_target(e);
     if (event_code == LV_EVENT_CLICKED)
     {
-        lang_selected_2 = true;
+        if (selected_lang_1)
+        {
+            lang_selected_1 = true;
+            lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x144A82), LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
     }
 }
 

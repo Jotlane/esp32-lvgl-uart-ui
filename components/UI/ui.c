@@ -170,6 +170,8 @@ lv_obj_t *ui_Icon_Mic_Inactive1;
 lv_obj_t *ui_Icon_Mic_Active1;
 lv_obj_t *ui_language;
 lv_obj_t *ui_arrow;
+void ui_event_Return_Button(lv_event_t *e);
+lv_obj_t *ui_Return_Button;
 lv_obj_t *ui_Dialogue_User_4;
 lv_obj_t *ui_Type_A_Panel_1;
 lv_obj_t *ui_Type_A_Bubble_1;
@@ -394,6 +396,16 @@ void ui_event_Confirm_Button(lv_event_t *e)
             lang_selected_1 = true;
             lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x144A82), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
+    }
+}
+
+void ui_event_Return_Button(lv_event_t *e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t *target = lv_event_get_target(e);
+    if (event_code == LV_EVENT_CLICKED)
+    {
+        _ui_screen_change(&ui_Start_Screen_v2, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Start_Screen_v2_screen_init);
     }
 }
 

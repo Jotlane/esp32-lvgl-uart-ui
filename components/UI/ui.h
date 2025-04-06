@@ -175,6 +175,8 @@ extern "C"
     extern lv_obj_t *ui_Icon_Mic_Active1;
     extern lv_obj_t *ui_language;
     extern lv_obj_t *ui_arrow;
+    void ui_event_Return_Button(lv_event_t *e);
+    extern lv_obj_t *ui_Return_Button;
     extern lv_obj_t *ui_Dialogue_User_4;
     extern lv_obj_t *ui_Type_A_Panel_1;
     extern lv_obj_t *ui_Type_A_Bubble_1;

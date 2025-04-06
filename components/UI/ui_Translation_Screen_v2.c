@@ -273,6 +273,19 @@ void ui_Translation_Screen_v2_screen_init(void)
     lv_obj_set_style_blend_mode(ui_arrow, LV_BLEND_MODE_NORMAL, LV_PART_MAIN | LV_STATE_DEFAULT);
     lv_obj_set_style_opa(ui_arrow, 135, LV_PART_MAIN | LV_STATE_DEFAULT);
 
+    ui_Return_Button = lv_btn_create(ui_Status_Panel1);
+    lv_obj_set_width(ui_Return_Button, 78);
+    lv_obj_set_height(ui_Return_Button, 50);
+    lv_obj_set_x(ui_Return_Button, 202);
+    lv_obj_set_y(ui_Return_Button, 0);
+    lv_obj_set_align(ui_Return_Button, LV_ALIGN_CENTER);
+    lv_obj_add_flag(ui_Return_Button, LV_OBJ_FLAG_SCROLL_ON_FOCUS); /// Flags
+    lv_obj_clear_flag(ui_Return_Button, LV_OBJ_FLAG_SCROLLABLE);    /// Flags
+    lv_obj_set_style_bg_color(ui_Return_Button, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(ui_Return_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_color(ui_Return_Button, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_shadow_opa(ui_Return_Button, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+
     ui_Dialogue_User_4 = lv_obj_create(ui_Translation_Screen_v2);
     lv_obj_set_width(ui_Dialogue_User_4, 462);
     lv_obj_set_height(ui_Dialogue_User_4, 354);

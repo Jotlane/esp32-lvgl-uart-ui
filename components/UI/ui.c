@@ -53,6 +53,7 @@ void ui_Start_Screen_v2_screen_init(void);
 lv_obj_t *ui_Start_Screen_v2;
 lv_obj_t *ui_Panel_User_5;
 lv_obj_t *ui_Selected_Bubble;
+lv_obj_t *ui_Selected_Bubble1;
 void ui_event_English_Button4(lv_event_t *e);
 lv_obj_t *ui_English_Button4;
 lv_obj_t *ui_Label1;
@@ -83,6 +84,8 @@ lv_obj_t *ui_Spacer_Bar_White2;
 lv_obj_t *ui_Optional_Text1;
 lv_obj_t *ui_language_icon1;
 lv_obj_t *ui_Panel_User_6;
+lv_obj_t *ui_Confirm_Button1;
+lv_obj_t *ui_Confirm_Label1;
 void ui_event_English_Button5(lv_event_t *e);
 lv_obj_t *ui_English_Button5;
 lv_obj_t *ui_Label42;
@@ -193,7 +196,7 @@ const lv_font_t *selected_font_2;
 bool lang_selected_1 = false;
 bool lang_selected_2 = false;
 uint8_t selected_lang_1 = 99;
-uint8_t selected_lang_2;
+uint8_t selected_lang_2 = 99;
 
 bool exit_flag = false;
 
@@ -331,7 +334,10 @@ void ui_event_English_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 0;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, -137);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "Confirm");
     }
 }
 void ui_event_Chinese_Button5(lv_event_t *e)
@@ -341,7 +347,10 @@ void ui_event_Chinese_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 1;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, -98);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular_SC, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "确认");
     }
 }
 void ui_event_Thai_Button5(lv_event_t *e)
@@ -351,7 +360,10 @@ void ui_event_Thai_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 7;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, 59);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular_Thai_Looped, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "ยืนยัน");
     }
 }
 void ui_event_Bahasa_Melayu_Button5(lv_event_t *e)
@@ -361,7 +373,10 @@ void ui_event_Bahasa_Melayu_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 4;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, -59);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "Sahkan");
     }
 }
 void ui_event_Bahasa_Indonesia_Button5(lv_event_t *e)
@@ -371,7 +386,10 @@ void ui_event_Bahasa_Indonesia_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 2;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, -19);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "Konfirmasi");
     }
 }
 void ui_event_Vietnamese_Button5(lv_event_t *e)
@@ -381,7 +399,10 @@ void ui_event_Vietnamese_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 6;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, 98);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "Xác nhận");
     }
 }
 void ui_event_Hindi_Button5(lv_event_t *e)
@@ -391,7 +412,10 @@ void ui_event_Hindi_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 3;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, 19);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular_Devanagari, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "पुष्टि करें");
     }
 }
 void ui_event_Filipino_Button5(lv_event_t *e)
@@ -401,7 +425,10 @@ void ui_event_Filipino_Button5(lv_event_t *e)
     if (event_code == LV_EVENT_CLICKED)
     {
         selected_lang_2 = 5;
-        lang_selected_2 = true;
+        lv_obj_set_y(ui_Selected_Bubble1, 137);
+        lv_obj_clear_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_set_style_text_font(ui_Confirm_Label1, &ui_font_Noto_Sans_Regular, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_label_set_text(ui_Confirm_Label1, "Kumpirmahin");
     }
 }
 void ui_event_Confirm_Button(lv_event_t *e)
@@ -414,6 +441,20 @@ void ui_event_Confirm_Button(lv_event_t *e)
         {
             lang_selected_1 = true;
             lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x144A82), LV_PART_MAIN | LV_STATE_DEFAULT);
+        }
+    }
+}
+
+void ui_event_Confirm_Button1(lv_event_t *e)
+{
+    lv_event_code_t event_code = lv_event_get_code(e);
+    lv_obj_t *target = lv_event_get_target(e);
+    if (event_code == LV_EVENT_CLICKED)
+    {
+        if (selected_lang_2 != 99)
+        {
+            lang_selected_2 = true;
+            lv_obj_set_style_bg_color(ui_Confirm_Button1, lv_color_hex(0xA14709), LV_PART_MAIN | LV_STATE_DEFAULT);
         }
     }
 }

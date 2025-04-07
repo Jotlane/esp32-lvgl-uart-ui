@@ -60,6 +60,7 @@ extern "C"
     extern lv_obj_t *ui_Start_Screen_v2;
     extern lv_obj_t *ui_Panel_User_5;
     extern lv_obj_t *ui_Selected_Bubble;
+    extern lv_obj_t *ui_Selected_Bubble1;
     void ui_event_English_Button4(lv_event_t *e);
     extern lv_obj_t *ui_English_Button4;
     extern lv_obj_t *ui_Label1;
@@ -91,6 +92,9 @@ extern "C"
     extern lv_obj_t *ui_Optional_Text1;
     extern lv_obj_t *ui_language_icon1;
     extern lv_obj_t *ui_Panel_User_6;
+    void ui_event_Confirm_Button1(lv_event_t *e);
+    extern lv_obj_t *ui_Confirm_Button1;
+    extern lv_obj_t *ui_Confirm_Label1;
     void ui_event_English_Button5(lv_event_t *e);
     extern lv_obj_t *ui_English_Button5;
     extern lv_obj_t *ui_Label42;

@@ -271,6 +271,14 @@ static void rx_task(void *arg)
             // change screen to language select screen
             lang_selected_1 = false;
             lang_selected_2 = false;
+            selected_lang_1 = 99;
+            selected_lang_2 = 99;
+            lv_obj_add_flag(ui_Selected_Bubble, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(ui_Selected_Bubble1, LV_OBJ_FLAG_HIDDEN);
+            lv_label_set_text(ui_Confirm_Label, "Confirm");
+            lv_label_set_text(ui_Confirm_Label1, "Confirm");
+            lv_obj_set_style_bg_color(ui_Confirm_Button, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
+            lv_obj_set_style_bg_color(ui_Confirm_Button1, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT);
             _ui_screen_change(&ui_Start_Screen_v2, LV_SCR_LOAD_ANIM_NONE, 500, 0, &ui_Start_Screen_v2_screen_init);
         }
         else if ((data[0] >> 6) == 0b11)
@@ -486,6 +494,7 @@ static void rx_task(void *arg)
                 }
                 prevSpeakerR = data[0] & (1 << 1);
                 firstSpeechR = false;
+                lv_obj_invalidate(ui_Dialogue_User_4);
             }
             else
             {
@@ -624,6 +633,7 @@ static void rx_task(void *arg)
                 }
                 prevSpeakerL = data[0] & (1 << 1);
                 firstSpeechL = false;
+                lv_obj_invalidate(ui_Dialogue_User_3);
             }
         }
     }
